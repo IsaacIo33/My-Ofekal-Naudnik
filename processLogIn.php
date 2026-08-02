@@ -1,6 +1,6 @@
 <?php
 
-$username = $_GET["username"];
+$username = basename($_GET["username"]); // $username = $_GET["username"];
 $password = $_GET["password"];
 $vikenaitVerified = $_GET["vikenaitVerified"];
 
