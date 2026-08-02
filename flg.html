@@ -1,0 +1,2686 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Language Generator</title>
+    <style>
+        body {
+            margin: 0;
+            background-size: 100% 100vh;
+            font-family: system-ui;
+            background-attachment: fixed;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        nav {
+            width: 0;
+            height: 100vh;
+            background-color: rgba(255, 255, 255, .7);
+            box-shadow: 5px 0 10px rgba(0, 0, 0, .5);
+            position: fixed;
+            transition: 0.1s;
+            overflow: auto;
+            text-align: center;
+            margin-top: -27px;
+        }
+
+        .rb {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+            cursor: pointer;
+            transition: 0.1s;
+            margin: 0;
+        }
+
+        .rb:hover {
+            background-color: lightblue;
+            color: darkblue;
+        }
+
+        nav p {
+            margin: 10px;
+        }
+
+        #openCloseSidebar {
+            margin: 10px;
+            padding: 10px;
+            font-size: 2rem;
+            background-color: white;
+            border: none;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, .5);
+            cursor: pointer;
+            transition: 0.1s;
+            position: fixed;
+        }
+
+        #openCloseSidebar:hover {
+            background-color: rgba(255, 255, 255, .5);
+            color: white;
+            -webkit-text-stroke: 1px black;
+        }
+
+        nav input {
+            width: 25%;
+            padding: 10px;
+            border: 1px solid black;
+            background-color: white;
+            border-radius: 25px;
+        }
+
+        button {
+            background-color: white;
+            color: black;
+            border: 1px solid black;
+            padding: 10px;
+            margin: 10px;
+            transition: 0.1s;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: black;
+            color: white;
+            border: 1px solid white;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: algerian, papyrus, system-ui;
+            color: white;
+            -webkit-text-stroke: 1px black;
+            text-shadow: 5px 5px 10px rgba(0, 0, 0, .5);
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, .5);
+            border-radius: 25px;
+            margin: 10px;
+            padding: 10px;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+
+
+<body id="body">
+    <nav id="nav">
+        <h2>Menu</h2>
+        <button onclick="newLanguage()" class="rb">Generate Language!</button>
+        <button onclick="saveLanguage()" class="rb">Save Language</button>
+        <button onclick="randomizeBackground()" class="rb">Randomize Background</button>
+        <h2>Configuration Settings</h2>
+        <p>Consonants: <span id="consonants"></span></p>
+        <label for="addConsonant">
+            Add Consonants (or Diagraphs):
+            <input type="text" name="addConsonant" id="addConsonant" />
+            <button onclick="newConsonant()">Submit</button>
+            <button onclick="consonants = []">Clear</button>
+            <button onclick="randomizeConsonants()">Randomize</button>
+        </label>
+        <hr>
+        <p>Vowels: <span id="vowels"></span></p>
+        <label for="addConsonant">
+            Add Vowels (or Syllaballic Consonants):
+            <input type="text" name="addVowel" id="addVowel" />
+            <button onclick="newVowel()">Submit</button>
+            <button onclick="vowels = []">Clear</button>
+            <button onclick="randomizeVowels()">Randomize</button>
+        </label>
+        <p>Not just the latin alphabet is supported; so you can add anything in consonants and in vowels.</p>
+    </nav>
+    <button id="openCloseSidebar" onclick="toggleMenu()" title="Alt+O, Alt+Shift+O" accesskey="o">+</button>
+    <h1 id="heading">FANTASY LANGUAGE GENERATOR</h1>
+    <div id="displayer"></div>
+    <script>
+        let menuIsOpen = false;
+        let consonants = [];
+        let vowels = [];
+        let name = "";
+        let extensions = ["ish", "ic", "an", "ian", "i", "ese"];
+        let grammar = ["Subject", "Verb", "Object"];
+        let adjPos;
+        let adjPosChoices = ["before the noun/verb", "after the noun/verb"];
+        let adposition;
+        let adpositionChoices = ["preposition", "postposition"];
+        let firstPronoun;
+        let firstPronounAcc;
+        let firstPronounPlural;
+        let firstPronounPluralAcc;
+        let firstPronounFem;
+        let firstPronounFemAcc;
+        let firstPronounFemPlural;
+        let firstPronounFemPluralAcc;
+        let secondPronoun;
+        let secondPronounAcc;
+        let secondPronounPlural;
+        let secondPronounPluralAcc;
+        let secondPronounFem;
+        let secondPronounFemAcc;
+        let secondPronounFemPlural;
+        let secondPronounFemPluralAcc;
+        let thirdPronoun;
+        let thirdPronounAcc;
+        let thirdPronounPlural;
+        let thirdPronounPluralAcc;
+        let thirdPronounMasc;
+        let thirdPronounMascAcc;
+        let thirdPronounMascPlural;
+        let thirdPronounMascPluralAcc;
+        let thirdPronounFem;
+        let thirdPronounFemAcc;
+        let thirdPronounFemPlural;
+        let thirdPronounFemPluralAcc;
+        let thirdPronounNear;
+        let thirdPronounNearAcc;
+        let thirdPronounNearPlural;
+        let thirdPronounNearPluralAcc;
+        let thirdPronounFar;
+        let thirdPronounFarAcc;
+        let thirdPronounFarPlural;
+        let thirdPronounFarPluralAcc;
+        let nomPronounsList = [];
+        let definite;
+        let definitePlural;
+        let definiteFem;
+        let definitePluralFem;
+        let indefinite;
+        let indefinitePlural;
+        let indefiniteFem;
+        let indefinitePluralFem;
+        let plural;
+        let gerund;
+        let command;
+        let progressive;
+        let past;
+        let future;
+        let firstPerspective;
+        let secondPerspective;
+        let thirdPerspective;
+        let pluralPerspective;
+        let iam;
+        let youare;
+        let itis;
+        let tobe;
+        let theyare;
+        let question;
+        let englishQuestionWords = ["what", "why", "who", "when", "where", "how", "which"];
+        let questionWords = [];
+        let dictionary = [];
+        let englishWords = ["careful", "gentle", "rough", "soft", "very", "really", "be", "then", "smart", "dumb", "wise", "silly", "funny", "good", "bad", "opprotunity", "trick", "trickster", "joke", "innocent", "guilty", "crime", "deed", "man", "trap", "something", "thing", "harsh", "dedicate", "later", "soon", "tommorow", "next", "consider", "person", "vow", "promise", "probation", "thank you", "thanks", "hello", "hi", "nice", "sorry", "sad", "luck", "welcome", "yay", "old man", "young man", "old woman", "young woman", "boy", "girl", "apple", "banana", "cherry", "strawberry", "grape", "mango", "kiwi", "man", "milk", "bread", "grain", "prisoner", "prison", "criminal", "cop", "soldier", "urge", "convince", "threaten", "life", "death", "worthy", "deserve", "honor", "glory", "despise", "fat", "monkey", "mankind", "human", "suffering", "torture", "fire", "familiar", "pain", "shame", "loop", "tie", "put", "place", "braid", "knot", "rope", "string", "grass", "left", "right", "up", "down", "behind", "before", "over", "under", "between", "frown", "buy", "sell", "smile", "sky", "ground", "underground", "now", "present", "past", "future", "formless", "structure", "nothing", "every", "everything", "there is", "there is no", "empty", "full", "darkness", "light", "black", "white", "red", "yellow", "green", "blue", "deep", "shallow", "hover", "float", "spirit", "ghost", "angel", "demon", "seed", "plant", "tree", "bush", "thorn", "weed", "grass", "leaf", "thing", "refer", "testify", "word", "sentence", "script", "deceit", "trick", "lie", "right", "wrong", "true", "false", "good", "bad", "hello", "peace", "chaos", "see", "create", "earth", "world", "shadow", "hill", "sand", "darkness", "light", "mountain", "valley", "dirt", "stone", "wood", "heaven", "hell", "maker", "destroyer", "God", "god", "satan", "end", "beginning", "fumble", "son", "daughter", "child", "man", "woman", "adult", "girl", "boy", "parent", "mom", "dad", "hidden", "secret", "obvious", "world", "earth", "planet", "highway", "road", "route", "path", "overpass", "pass", "could", "might", "may", "can", "struggle", "honestly", "honest", "go", "stop", "come", "walk", "family", "happiness", "sadness", "anticipate", "crazy", "sane", "excitement", "animal", "red", "orange", "yellow", "green", "blue", "purple", "pink", "mammal", "gallop", "run", "horse", "duck", "willing", "unwilling", "slippery", "slope", "edge", "watermelon", "melon", "slam", "door", "window", "entrance", "change", "confused", "become", "taste", "smell", "touch", "see", "hear", "style", "aesthetic", "person", "fish", "neighbor", "stranger", "forigner", "family member", "fishpond", "fate", "say", "accept", "reject", "decide", "pie", "get", "tiny", "part", "small", "big", "piece", "be", "around", "time", "melancholy", "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "spin", "stack", "fold", "worry", "concern", "impress", "sure", "unsure", "not", "venison", "beef", "mutton", "chicken", "pork", "pig", "sheep", "create", "destroy", "always", "sun", "moon", "star", "do", "sunglasses", "glasses", "goggles", "binoculars", "wear", "day", "night", "morning", "afternoon", "evening", "midnight", "include", "exclude", "water", "fire", "wine", "weekend", "difficult", "hard", "easy", "become", "lake", "pond", "sea", "bay", "ocean", "gulf", "river", "stream", "canal", "swamp", "tortoise", "turtle", "reptile", "concept", "however", "life", "death", "can", "child", "adult", "go", "come", "memorable", "gear", "equipment", "designer", "clothing", "town", "city", "village", "neighborhood", "metropolis", "capital", "settlement", "this",
+            "no", "yes", "pair", "hat", "shirt", "pant", "underwear", "sock", "split",
+            "have",
+            "will",
+            "your",
+            "from",
+            "they",
+            "know",
+            "want",
+            "been",
+            "good",
+            "much",
+            "some",
+            "time",
+            "very",
+            "when",
+            "come",
+            "here",
+            "just",
+            "like",
+            "make",
+            "what",
+            "them",
+            "then",
+            "also",
+            "back",
+            "only",
+            "take",
+            "into",
+            "over",
+            "think",
+            "help",
+            "work",
+            "need",
+            "such",
+            "give",
+            "most",
+            "many",
+            "find",
+            "long",
+            "down",
+            "life",
+            "call",
+            "used",
+            "love",
+            "look",
+            "more",
+            "away",
+            "keep",
+            "last",
+            "next",
+            "each",
+            "want",
+            "tell",
+            "year",
+            "same",
+            "read",
+            "move",
+            "name",
+            "part",
+            "high",
+            "home",
+            "area",
+            "show",
+            "fact",
+            "open",
+            "stop",
+            "real",
+            "line",
+            "side",
+            "face",
+            "turn",
+            "kind",
+            "play",
+            "head",
+            "base",
+            "feel",
+            "four",
+            "land",
+            "need",
+            "form",
+            "food",
+            "body",
+            "care",
+            "room",
+            "full",
+            "easy",
+            "hard",
+            "word",
+            "mind",
+            "past",
+            "hour",
+            "game",
+            "free",
+            "plan",
+            "hope",
+            "deal",
+            "rate",
+            "live",
+            "case",
+            "test",
+            "book",
+            "cost",
+            "type",
+            "idea",
+            "list",
+            "rule",
+            "deal",
+            "view",
+            "sort",
+            "role",
+            "site",
+            "risk",
+            "goal",
+            "news",
+            "rest",
+            "note",
+            "step",
+            "card",
+            "unit",
+            "data",
+            "file",
+            "page",
+            "code",
+            "task",
+            "cell",
+            "form",
+            "line",
+            "edge",
+            "size",
+            "rate",
+            "base",
+            "tool",
+            "item",
+            "shop",
+            "sale",
+            "bill",
+            "cash",
+            "bank",
+            "fund",
+            "loan",
+            "debt",
+            "taxi",
+            "rent",
+            "cost",
+            "earn",
+            "save",
+            "gain",
+            "loss",
+            "drop",
+            "rise",
+            "grow",
+            "fall",
+            "send",
+            "mail",
+            "post",
+            "chat",
+            "talk",
+            "call",
+            "meet",
+            "join",
+            "pick",
+            "hold",
+            "push",
+            "pull",
+            "lift",
+            "drop",
+            "walk",
+            "ride",
+            "drive",
+            "move",
+            "stay",
+            "rest",
+            "play",
+            "read",
+            "sing",
+            "dance",
+            "cook",
+            "bake",
+            "wash",
+            "clean",
+            "work",
+            "plan",
+            "draw",
+            "paint",
+            "build",
+            "make",
+            "grow",
+            "help",
+            "care",
+            "love",
+            "hate",
+            "feel",
+            "need",
+            "want",
+            "wish",
+            "hope",
+            "live",
+            "stay",
+            "rest",
+            "open",
+            "close",
+            "start",
+            "begin",
+            "end",
+            "stop",
+            "wait",
+            "turn",
+            "face",
+            "look",
+            "hear",
+            "talk",
+            "speak",
+            "read",
+            "write",
+            "count",
+            "think",
+            "learn",
+            "teach",
+            "study",
+            "check",
+            "watch",
+            "listen",
+            "follow",
+            "lead",
+            "drive",
+            "ride",
+            "walk",
+            "run",
+            "jump",
+            "climb",
+            "fall",
+            "drop",
+            "lift",
+            "push",
+            "pull",
+            "carry",
+            "bring",
+            "take",
+            "give",
+            "send",
+            "show",
+            "hide",
+            "find",
+            "lose",
+            "keep",
+            "hold",
+            "break",
+            "fix",
+            "build",
+            "make",
+            "cook",
+            "bake",
+            "eat",
+            "drink",
+            "sleep",
+            "dream",
+            "wake",
+            "smile",
+            "laugh",
+            "cry",
+            "shout",
+            "scream",
+            "yell",
+            "whisper",
+            "touch",
+            "feel",
+            "love",
+            "hate",
+            "care",
+            "need",
+            "want",
+            "wish",
+            "hope",
+            "live",
+            "die",
+            "stay",
+            "move",
+            "rest",
+            "play",
+            "work",
+            "plan",
+            "draw",
+            "paint",
+            "write",
+            "read",
+            "study",
+            "learn",
+            "teach",
+            "think",
+            "know",
+            "guess",
+            "check",
+            "watch",
+            "listen",
+            "follow",
+            "lead",
+            "drive",
+            "ride",
+            "walk",
+            "run",
+            "jump",
+            "climb",
+            "fall",
+            "drop",
+            "lift",
+            "push",
+            "pull",
+            "carry",
+            "bring",
+            "take",
+            "give",
+            "send",
+            "show",
+            "hide",
+            "find",
+            "lose",
+            "keep",
+            "hold",
+            "break",
+            "fix",
+            "build",
+            "make",
+            "cook",
+            "bake",
+            "eat",
+            "drink",
+            "sleep",
+            "dream",
+            "wake",
+            "smile",
+            "laugh",
+            "cry",
+            "shout",
+            "scream",
+            "yell",
+            "whisper",
+            "touch",
+            "feel",
+            "love",
+            "hate",
+            "care",
+            "need",
+            "want",
+            "wish",
+            "hope",
+            "live",
+            "stay",
+            "rest",
+            "open",
+            "close",
+            "start",
+            "begin",
+            "end",
+            "stop",
+            "wait",
+            "turn",
+            "face",
+            "look",
+            "hear",
+            "talk",
+            "speak",
+            "read",
+            "write",
+            "count",
+            "think",
+            "learn",
+            "teach",
+            "study",
+            "check",
+            "watch",
+            "listen",
+            "follow",
+            "lead",
+            "drive",
+            "ride",
+            "walk",
+            "run",
+            "jump",
+            "climb",
+            "fall",
+            "drop",
+            "lift",
+            "push",
+            "pull",
+            "carry",
+            "bring",
+            "take",
+            "give",
+            "send",
+            "show",
+            "hide",
+            "find",
+            "lose",
+            "keep",
+            "hold",
+            "break",
+            "fix",
+            "build",
+            "make",
+            "cook",
+            "bake",
+            "eat",
+            "drink",
+            "sleep",
+            "dream",
+            "wake",
+            "smile",
+            "laugh",
+            "cry",
+            "shout",
+            "scream",
+            "yell",
+            "whisper",
+            "touch",
+            "feel",
+            "love",
+            "hate",
+            "care",
+            "need",
+            "want",
+            "wish",
+            "hope",
+            "live",
+            "stay",
+            "rest",
+            "open",
+            "close",
+            "start",
+            "begin",
+            "end",
+            "stop",
+            "wait",
+            "turn",
+            "face",
+            "look",
+            "hear",
+            "talk",
+            "speak",
+            "read",
+            "write",
+            "count",
+            "think",
+            "learn",
+            "teach",
+            "study",
+            "check",
+            "watch",
+            "listen",
+            "follow",
+            "lead",
+            "drive",
+            "ride",
+            "walk",
+            "run",
+            "jump",
+            "climb",
+            "fall",
+            "drop",
+            "lift",
+            "push",
+            "pull",
+            "carry",
+            "bring",
+            "take",
+            "give",
+            "send",
+            "show",
+            "hide",
+            "find",
+            "lose",
+            "keep",
+            "hold",
+            "break",
+            "fix",
+            "build",
+            "make",
+            "cook",
+            "bake",
+            "eat",
+            "drink",
+            "sleep",
+            "dream",
+            "wake",
+            "smile",
+            "laugh",
+            "cry",
+            "shout",
+            "scream",
+            "yell",
+            "whisper",
+            "touch",
+            "feel",
+            "love",
+            "hate",
+            "care",
+            "need",
+            "want",
+            "wish",
+            "hope",
+            "live",
+            "stay",
+            "rest",
+            "open",
+            "close",
+            "start",
+            "begin",
+            "end",
+            "stop",
+            "wait",
+            "turn",
+            "face",
+            "look",
+            "hear",
+            "talk",
+            "speak",
+            "read",
+            "write",
+            "count",
+            "think",
+            "learn",
+            "teach",
+            "study",
+            "check",
+            "watch",
+            "listen",
+            "follow",
+            "lead",
+            "drive",
+            "ride",
+            "walk",
+            "run",
+            "jump",
+            "climb",
+            "fall",
+            "drop",
+            "lift",
+            "push",
+            "pull",
+            "carry",
+            "bring",
+            "take",
+            "give",
+            "send",
+            "show",
+            "hide",
+            "find",
+            "lose",
+            "keep",
+            "hold",
+            "break",
+            "fix",
+            "build",
+            "make",
+            "cook",
+            "bake",
+            "eat",
+            "drink",
+            "sleep",
+            "dream",
+            "wake",
+            "smile",
+            "laugh",
+            "cry",
+            "shout",
+            "scream",
+            "yell",
+            "whisper",
+            "touch",
+            "feel",
+            "love",
+            "hate",
+            "care",
+            "need",
+            "want",
+            "wish",
+            "hope",
+            "live",
+            "stay",
+            "rest",
+            "open",
+            "close",
+            "start",
+            "begin",
+            "end",
+            "stop",
+            "wait",
+            "turn",
+            "face",
+            "look",
+            "hear",
+            "talk",
+            "speak",
+            "read",
+            "write",
+            "count",
+            "think",
+            "learn",
+            "teach",
+            "study",
+            "check",
+            "watch",
+            "listen",
+            "follow",
+            "lead",
+            "drive",
+            "ride",
+            "walk",
+            "run",
+            "jump",
+            "climb",
+            "fall",
+            "drop",
+            "lift",
+            "push",
+            "pull",
+            "carry",
+            "bring",
+            "take",
+            "give",
+            "send",
+            "show",
+            "hide",
+            "find",
+            "lose",
+            "keep",
+            "hold",
+            "break",
+            "fix",
+            "build",
+            "make",
+            "cook",
+            "bake",
+            "eat",
+            "drink",
+            "sleep",
+            "dream",
+            "wake",
+            "smile",
+            "laugh",
+            "cry",
+            "shout",
+            "scream",
+            "yell",
+            "whisper",
+            "touch",
+            "feel",
+            "love",
+            "hate",
+            "care",
+            "need",
+            "want",
+            "wish",
+            "hope",
+            "live",
+            "stay",
+            "rest",
+            "open",
+            "close",
+            "start",
+            "begin",
+            "end",
+            "stop",
+            "wait",
+            "turn",
+            "face",
+            "look",
+            "hear",
+            "talk",
+            "speak",
+            "read",
+            "write",
+            "count",
+            "think",
+            "learn",
+            "teach",
+            "study",
+            "check",
+            "watch",
+            "listen",
+            "follow",
+            "lead",
+            "drive",
+            "ride",
+            "walk",
+            "run",
+            "jump",
+            "climb",
+            "fall",
+            "drop",
+            "lift",
+            "push",
+            "pull",
+            "carry",
+            "bring",
+            "take",
+            "give",
+            "send",
+            "show",
+            "hide",
+            "find",
+            "lose",
+            "keep",
+            "hold",
+            "break",
+            "fix",
+            "build",
+            "make",
+            "cook",
+            "bake",
+            "eat",
+            "drink",
+            "sleep",
+            "dream",
+            "wake",
+            "smile",
+            "laugh",
+            "cry",
+            "shout",
+            "scream",
+            "yell",
+            "whisper",
+            "touch",
+            "feel",
+            "love",
+            "hate",
+            "care",
+            "need",
+            "want",
+            "wish",
+            "hope",
+            "live",
+            "stay",
+            "rest",
+            "open",
+            "close",
+            "start",
+            "begin",
+            "end",
+            "stop",
+            "wait",
+            "turn",
+            "face",
+            "look",
+            "hear",
+            "talk",
+            "speak",
+            "read",
+            "write",
+            "count",
+            "think",
+            "learn",
+            "teach",
+            "study",
+            "check",
+            "watch",
+            "listen",
+            "follow",
+            "lead",
+            "drive",
+            "ride",
+            "walk",
+            "run",
+            "jump",
+            "climb",
+            "fall",
+            "drop",
+            "lift",
+            "push",
+            "pull",
+            "carry",
+            "bring",
+            "take",
+            "give",
+            "send",
+            "show",
+            "hide",
+            "find",
+            "lose",
+            "keep",
+            "hold",
+            "break",
+            "fix",
+            "build",
+            "make",
+            "cook",
+            "bake",
+            "eat",
+            "drink",
+            "sleep",
+            "dream",
+            "wake",
+            "smile",
+            "laugh",
+            "cry",
+            "shout",
+            "scream",
+            "yell",
+            "whisper",
+            "touch",
+            "feel",
+            "love",
+            "hate",
+            "care",
+            "need",
+            "want",
+            "wish",
+            "hope",
+            "live",
+            "stay",
+            "rest",
+            "open",
+            "close",
+            "start",
+            "begin",
+            "end",
+            "stop",
+            "wait",
+            "turn",
+            "face",
+            "look",
+            "hear",
+            "talk",
+            "speak",
+            "read",
+            "write",
+            "count",
+            "think",
+            "learn",
+            "teach",
+            "study",
+            "check",
+            "watch",
+            "listen",
+            "follow",
+            "lead",
+            "drive",
+            "ride",
+            "walk",
+            "run",
+            "jump",
+            "climb",
+            "fall",
+            "drop",
+            "lift",
+            "push",
+            "pull",
+            "carry",
+            "bring",
+            "take",
+            "give",
+            "send",
+            "show",
+            "hide",
+            "find",
+            "lose",
+            "keep",
+            "hold",
+            "break",
+            "fix",
+            "build",
+            "make",
+            "cook",
+            "bake",
+            "eat",
+            "drink",
+            "sleep",
+            "dream",
+            "wake",
+            "smile",
+            "laugh",
+            "cry",
+            "shout",
+            "scream",
+            "yell",
+            "whisper",
+            "touch",
+            "feel",
+            "love",
+            "hate",
+            "care",
+            "need",
+            "want",
+            "wish",
+            "hope",
+            "live",
+            "stay",
+            "rest",
+            "open",
+            "close",
+            "start",
+            "begin",
+            "end",
+            "stop",
+            "wait",
+            "turn",
+            "face",
+            "look",
+            "hear",
+            "talk",
+            "speak",
+            "read",
+            "write",
+            "count",
+            "think",
+            "learn",
+            "teach",
+            "study",
+            "check",
+            "watch",
+            "listen",
+            "follow",
+            "lead",
+            "drive",
+            "ride",
+            "walk",
+            "run",
+            "jump",
+            "climb",
+            "fall",
+            "drop",
+            "lift",
+            "push",
+            "pull",
+            "carry",
+            "bring",
+            "take",
+            "give",
+            "send",
+            "show",
+            "hide",
+            "find",
+            "lose",
+            "keep",
+            "hold",
+            "break",
+            "fix",
+            "build",
+            "make",
+            "cook",
+            "bake",
+            "eat",
+            "drink",
+            "sleep",
+            "dream",
+            "wake",
+            "smile",
+            "laugh",
+            "cry",
+            "shout",
+            "scream",
+            "yell",
+            "whisper",
+            "touch",
+            "feel",
+            "love",
+            "hate",
+            "care",
+            "need",
+            "want",
+            "wish",
+            "hope",
+            "live",
+            "stay",
+            "rest",
+            "open",
+            "close",
+            "start",
+            "begin",
+            "end",
+            "stop",
+            "wait",
+            "turn",
+            "face",
+            "look",
+            "hear",
+            "talk",
+            "speak",
+            "read",
+            "write",
+            "count",
+            "think",
+            "learn",
+            "teach",
+            "study",
+            "check",
+            "watch",
+            "listen",
+            "follow",
+            "lead",
+            "drive",
+            "ride",
+            "walk",
+            "run",
+            "jump",
+            "climb",
+            "fall",
+            "drop",
+            "lift",
+            "push",
+            "pull",
+            "carry",
+            "bring",
+            "take",
+            "give",
+            "send",
+            "show"];
+        let englishShortWords = ["about", "above", "across", "after", "against", "along", "among", "around",
+            "at", "before", "behind", "below", "beneath", "beside", "between", "beyond",
+            "but", "by", "despite", "down", "during", "except", "for", "from", "in",
+            "inside", "into", "like", "near", "of", "off", "on", "onto", "out", "outside",
+            "over", "past", "since", "through", "throughout", "to", "toward", "under",
+            "underneath", "until", "up", "upon", "with", "within", "without", "and", "but", "or", "nor", "for", "so", "yet",
+            "although", "because", "since", "unless", "until", "while", "whereas",
+            "as", "after", "before", "even though", "if", "once", "provided that",
+            "rather than", "though", "when", "whenever", "whether",];
+        let posession;
+        const bodyEl = document.getElementById("body");
+        const navEl = document.getElementById("nav");
+        const openCloseSidebarEl = document.getElementById("openCloseSidebar");
+        const consonantsEl = document.getElementById("consonants");
+        const vowelsEl = document.getElementById("vowels");
+        const addConsonantEl = document.getElementById("addConsonant");
+        const addVowelEl = document.getElementById("addVowel");
+        const displayerEl = document.getElementById("displayer");
+        const headingEl = document.getElementById("heading");
+
+        function saveLanguage() {
+            toggleMenu();
+            headingEl.style.display = "none";
+            openCloseSidebarEl.style.display = "none";
+            window.print();
+            toggleMenu();
+            headingEl.style.display = "block";
+            openCloseSidebarEl.style.display = "block";
+        }
+
+        function generateWord(word) {
+            word = "";
+            for (let i = 0; i < Math.ceil(Math.random() * 5); i++) {
+                let newSyllable = vowels[Math.floor(Math.random() * vowels.length)];
+                let cNewSyllable = Math.floor(Math.random() * 2);
+                let newSyllableC = Math.floor(Math.random() * 2);
+                if (cNewSyllable == 0) {
+                    newSyllable = consonants[Math.floor(Math.random() * consonants.length)] + newSyllable;
+                }
+                if (newSyllableC == 0) {
+                    newSyllable = newSyllable + consonants[Math.floor(Math.random() * consonants.length)];
+                }
+                word = word + newSyllable;
+            }
+            return word;
+        }
+
+        function generateShortWord(word) {
+            word = "";
+            for (let i = 0; i < Math.ceil(Math.random() * 2); i++) {
+                let newSyllable = vowels[Math.floor(Math.random() * vowels.length)];
+                let cNewSyllable = Math.floor(Math.random() * 2);
+                let newSyllableC = Math.floor(Math.random() * 2);
+                if (cNewSyllable == 0) {
+                    newSyllable = consonants[Math.floor(Math.random() * consonants.length)] + newSyllable;
+                }
+                if (newSyllableC == 0) {
+                    newSyllable = newSyllable + consonants[Math.floor(Math.random() * consonants.length)];
+                }
+                word = word + newSyllable;
+            }
+            return word;
+        }
+
+        function generateTinyWord(word) {
+            word = "";
+            for (let i = 0; i < Math.ceil(Math.random() * 1); i++) {
+                let newSyllable = vowels[Math.floor(Math.random() * vowels.length)];
+                let cNewSyllable = Math.floor(Math.random() * 2);
+                let newSyllableC = Math.floor(Math.random() * 2);
+                if (cNewSyllable == 0) {
+                    newSyllable = consonants[Math.floor(Math.random() * consonants.length)] + newSyllable;
+                }
+                if (newSyllableC == 0) {
+                    newSyllable = newSyllable + consonants[Math.floor(Math.random() * consonants.length)];
+                }
+                word = word + newSyllable;
+            }
+            return word;
+        }
+
+        function newLanguage() {
+            if (consonants.length != 0 && vowels.length != 0) {
+                dictionary = [];
+                toggleMenu();
+                nomPronounsList = [];
+                displayerEl.innerHTML = "";
+                let containerEl = document.createElement("div");
+                containerEl.classList.add("container");
+                displayerEl.appendChild(containerEl);
+                let languageNameEl = document.createElement("h2");
+                languageNameEl.style.textTransform = "capitalize";
+                //Generate Name
+                name = generateWord(name);
+                let hasExtension = Math.floor(Math.random() * 2);
+                if (hasExtension == 0) {
+                    name = name + extensions[Math.floor(Math.random() * extensions.length)];
+                }
+                languageNameEl.innerText = "The language of " + name;
+                containerEl.appendChild(languageNameEl);
+                //Generate Grammar
+                const grammarEl = document.createElement("p");
+                shuffle(grammar);
+                grammarEl.innerText = "Sentence Pattern: " + grammar;
+                containerEl.appendChild(grammarEl);
+                //Select Adjective Position
+                const adjPosEl = document.createElement("p");
+                adjPos = adjPosChoices[Math.floor(Math.random() * adjPosChoices.length)];
+                adjPosEl.innerText = "Adjective Position: " + adjPos;
+                containerEl.appendChild(adjPosEl);
+                //Select Adposition
+                const adPosEl = document.createElement("p");
+                adposition = adpositionChoices[Math.floor(Math.random() * adpositionChoices.length)];
+                adPosEl.innerText = "Adposition: " + adposition;
+                containerEl.appendChild(adPosEl);
+                //CONTAINER OF PRONOUNS
+                const pronounContainerEl = document.createElement("div");
+                pronounContainerEl.classList.add("container");
+                displayerEl.appendChild(pronounContainerEl);
+                const pronounHeadingEl = document.createElement("h2");
+                pronounHeadingEl.innerText = name + " Pronouns";
+                pronounHeadingEl.style.textTransform = "capitalize";
+                pronounContainerEl.appendChild(pronounHeadingEl);
+                //First Pronoun
+                const firstPronounEl = document.createElement("p");
+                firstPronoun = generateShortWord(firstPronoun);
+                firstPronounEl.innerText = "First Pronoun (I): " + firstPronoun;
+                pronounContainerEl.appendChild(firstPronounEl);
+                let accBiz = Math.floor(Math.random() * 2);
+                nomPronounsList.push(firstPronoun);
+                //First Pronoun Accusative
+                if (accBiz == 0) {
+                    const firstPronounAccEl = document.createElement("p");
+                    firstPronounAcc = generateShortWord(firstPronounAcc);
+                    firstPronounAccEl.innerText = "First Pronoun (me) (Accusative): " + firstPronounAcc;
+                    pronounContainerEl.appendChild(firstPronounAccEl);
+                    nomPronounsList.push(firstPronounAcc);
+                }
+                //First Pronoun Plural
+                let pluralBiz = Math.floor(Math.random() * 2);
+                if (pluralBiz == 0) {
+                    const firstPronounPluralEl = document.createElement("p");
+                    firstPronounPlural = generateShortWord(firstPronounPlural);
+                    firstPronounPluralEl.innerText = "First Pronoun (we) (Plural): " + firstPronounPlural;
+                    pronounContainerEl.appendChild(firstPronounPluralEl);
+                    nomPronounsList.push(firstPronounPlural);
+                }
+                //First Pronoun Plural Accusative
+                if (accBiz == 0 && pluralBiz == 0) {
+                    const firstPronounPluralAccEl = document.createElement("p");
+                    firstPronounPluralAcc = generateShortWord(firstPronounPluralAcc);
+                    firstPronounPluralAccEl.innerText = "First Pronoun (us) (Accusative, Plural): " + firstPronounPluralAcc;
+                    pronounContainerEl.appendChild(firstPronounPluralAccEl);
+                    nomPronounsList.push(firstPronounPluralAcc);
+                }
+                //First Pronoun Feminine
+                let genderBiz = Math.floor(Math.random() * 10);
+                if (genderBiz == 0) {
+                    const firstPronounFemEl = document.createElement("p");
+                    firstPronounFem = generateShortWord(firstPronounFem);
+                    firstPronounFemEl.innerText = "First Pronoun (I) (Feminine): " + firstPronounFem;
+                    pronounContainerEl.appendChild(firstPronounFemEl);
+                    nomPronounsList.push(firstPronounFem);
+                    //First Pronoun Feminine Accusative
+                    if (accBiz == 0) {
+                        const firstPronounFemAccEl = document.createElement("p");
+                        firstPronounFemAcc = generateShortWord(firstPronounFemAcc);
+                        firstPronounFemAccEl.innerText = "First Pronoun (me) (Accusative, Feminine): " + firstPronounFemAcc;
+                        pronounContainerEl.appendChild(firstPronounFemAccEl);
+                        nomPronounsList.push(firstPronounFemAcc);
+                    }
+                    //First Pronoun Feminine Plural
+                    if (pluralBiz == 0) {
+                        const firstPronounFemPluralEl = document.createElement("p");
+                        firstPronounFemPlural = generateShortWord(firstPronounFemPlural);
+                        firstPronounFemPluralEl.innerText = "First Pronoun (we) (Plural, Feminine): " + firstPronounFemPlural;
+                        pronounContainerEl.appendChild(firstPronounFemPluralEl);
+                        nomPronounsList.push(firstPronounFemPlural);
+                    }
+                    //First Pronoun Feminine Plural Accusative
+                    if (accBiz == 0 && pluralBiz == 0) {
+                        const firstPronounFemPluralAccEl = document.createElement("p");
+                        firstPronounFemPluralAcc = generateShortWord(firstPronounFemPluralAcc);
+                        firstPronounFemPluralAccEl.innerText = "First Pronoun (us) (Accusative, Plural, Feminine): " + firstPronounFemPluralAcc;
+                        pronounContainerEl.appendChild(firstPronounFemPluralAccEl);
+                        nomPronounsList.push(firstPronounFemPluralAcc);
+                    }
+                }
+                //Second Pronoun
+                const secondPronounEl = document.createElement("p");
+                secondPronoun = generateShortWord(secondPronoun);
+                secondPronounEl.innerText = "Second Pronoun (you): " + secondPronoun;
+                pronounContainerEl.appendChild(secondPronounEl);
+                nomPronounsList.push(secondPronoun);
+                //Second Pronoun Accusative
+                if (accBiz == 0) {
+                    const secondPronounAccEl = document.createElement("p");
+                    secondPronounAcc = generateShortWord(secondPronounAcc);
+                    secondPronounAccEl.innerText = "Second Pronoun (you) (Accusative): " + secondPronounAcc;
+                    pronounContainerEl.appendChild(secondPronounAccEl);
+                    nomPronounsList.push(secondPronounAcc);
+                }
+                //Second Pronoun Plural
+                if (pluralBiz == 0) {
+                    const secondPronounPluralEl = document.createElement("p");
+                    secondPronounPlural = generateShortWord(secondPronounPlural);
+                    secondPronounPluralEl.innerText = "Second Pronoun (you) (Plural): " + secondPronounPlural;
+                    pronounContainerEl.appendChild(secondPronounPluralEl);
+                    nomPronounsList.push(secondPronounPlural);
+                }
+                //Second Pronoun Plural Accusative
+                if (accBiz == 0 && pluralBiz == 0) {
+                    const secondPronounPluralAccEl = document.createElement("p");
+                    secondPronounPluralAcc = generateShortWord(secondPronounPluralAcc);
+                    secondPronounPluralAccEl.innerText = "Second Pronoun (you) (Accusative, Plural): " + secondPronounPluralAcc;
+                    pronounContainerEl.appendChild(secondPronounPluralAccEl);
+                    nomPronounsList.push(secondPronounPluralAcc);
+                }
+                if (genderBiz == 0) {
+                    //Second Pronoun Feminine
+                    const secondPronounFemEl = document.createElement("p");
+                    secondPronounFem = generateShortWord(secondPronounFem);
+                    secondPronounFemEl.innerText = "Second Pronoun (you) (Feminine): " + secondPronounFem;
+                    pronounContainerEl.appendChild(secondPronounFemEl);
+                    nomPronounsList.push(secondPronounFem);
+                    //Second Pronoun Feminine Accusative
+                    if (accBiz == 0) {
+                        const secondPronounFemAccEl = document.createElement("p");
+                        secondPronounFemAcc = generateShortWord(secondPronounFemAcc);
+                        secondPronounFemAccEl.innerText = "Second Pronoun (you) (Accusative, Feminine): " + secondPronounFemAcc;
+                        pronounContainerEl.appendChild(secondPronounFemAccEl);
+                        nomPronounsList.push(secondPronounFemAcc);
+                    }
+                    //Second Pronoun Feminine Plural
+                    if (pluralBiz == 0) {
+                        const secondPronounFemPluralEl = document.createElement("p");
+                        secondPronounFemPlural = generateShortWord(secondPronounFemPlural);
+                        secondPronounFemPluralEl.innerText = "Second Pronoun (you) (Plural, Feminine): " + secondPronounFemPlural;
+                        pronounContainerEl.appendChild(secondPronounFemPluralEl);
+                        nomPronounsList.push(secondPronounFemPlural);
+                    }
+                    //Second Pronoun Feminine Plural Accusative
+                    if (pluralBiz == 0) {
+                        const secondPronounFemPluralAccEl = document.createElement("p");
+                        secondPronounFemPluralAcc = generateShortWord(secondPronounFemPluralAcc);
+                        secondPronounFemPluralAccEl.innerText = "Second Pronoun (you) (Accusative, Plural, Feminine): " + secondPronounFemPluralAcc;
+                        pronounContainerEl.appendChild(secondPronounFemPluralAccEl);
+                        nomPronounsList.push(secondPronounFemPluralAcc);
+                    }
+                }
+                let thirdPronounBiz = Math.floor(Math.random() * 2);
+                //Third Pronoun
+                if (thirdPronounBiz == 0) {
+                    const thirdPronounEl = document.createElement("p");
+                    thirdPronoun = generateShortWord(thirdPronoun);
+                    thirdPronounEl.innerText = "Third Pronoun (it): " + thirdPronoun;
+                    pronounContainerEl.appendChild(thirdPronounEl);
+                    nomPronounsList.push(thirdPronoun);
+                }
+                //Third Pronoun Accusative
+                if (thirdPronounBiz == 0 && accBiz == 0) {
+                    const thirdPronounAccEl = document.createElement("p");
+                    thirdPronounAcc = generateShortWord(thirdPronounAcc);
+                    thirdPronounAccEl.innerText = "Third Pronoun (it) (Accusative): " + thirdPronounAcc;
+                    pronounContainerEl.appendChild(thirdPronounAccEl);
+                    nomPronounsList.push(thirdPronounAcc);
+                }
+                //Third Pronoun Plural
+                if (thirdPronounBiz == 0 && pluralBiz == 0) {
+                    const thirdPronounPluralEl = document.createElement("p");
+                    thirdPronounPlural = generateShortWord(thirdPronounPlural);
+                    thirdPronounPluralEl.innerText = "Third Pronoun (they) (Plural): " + thirdPronounPlural;
+                    pronounContainerEl.appendChild(thirdPronounPluralEl);
+                    nomPronounsList.push(thirdPronounPlural);
+                }
+                //Third Pronoun Plural Accusative
+                if (thirdPronounBiz == 0 && pluralBiz == 0 && accBiz == 0) {
+                    const thirdPronounPluralAccEl = document.createElement("p");
+                    thirdPronounPluralAcc = generateShortWord(thirdPronounPluralAcc);
+                    thirdPronounPluralAccEl.innerText = "Third Pronoun (them) (Accusative, Plural): " + thirdPronounPluralAcc;
+                    pronounContainerEl.appendChild(thirdPronounPluralAccEl);
+                    nomPronounsList.push(thirdPronounPluralAcc);
+                }
+                //Complicated
+                let heShe = Math.floor(Math.random() * 3);
+                if (heShe == 0) {
+                    //Third Pronoun Masculine
+                    const thirdPronounMascEl = document.createElement("p");
+                    thirdPronounMasc = generateShortWord(thirdPronounMasc);
+                    thirdPronounMascEl.innerText = "Third Pronoun (he) (Masculine): " + thirdPronounMasc;
+                    pronounContainerEl.appendChild(thirdPronounMascEl);
+                    nomPronounsList.push(thirdPronounMasc);
+                    //Third Pronoun Masculine Accusative
+                    if (accBiz == 0) {
+                        const thirdPronounMascAccEl = document.createElement("p");
+                        thirdPronounMascAcc = generateShortWord(thirdPronounMascAcc);
+                        thirdPronounMascAccEl.innerText = "Third Pronoun (him) (Accusative, Masculine): " + thirdPronounMascAcc;
+                        pronounContainerEl.appendChild(thirdPronounMascAccEl);
+                        nomPronounsList.push(thirdPronounMascAcc);
+                    }
+                    //Third Pronoun Masculine Plural
+                    if (pluralBiz == 0) {
+                        const thirdPronounMascPluralEl = document.createElement("p");
+                        thirdPronounMascPlural = generateShortWord(thirdPronounMascPlural);
+                        thirdPronounMascPluralEl.innerText = "Third Pronoun (they) (Plural, Masculine): " + thirdPronounMascPlural;
+                        pronounContainerEl.appendChild(thirdPronounMascPluralEl);
+                        nomPronounsList.push(thirdPronounMascPlural);
+                    }
+                    //Third Pronoun Masculine Plural Accusative
+                    if (accBiz == 0 && pluralBiz == 0) {
+                        const thirdPronounMascPluralAccEl = document.createElement("p");
+                        thirdPronounMascPluralAcc = generateShortWord(thirdPronounMascPluralAcc);
+                        thirdPronounMascPluralAccEl.innerText = "Third Pronoun (them) (Accusative, Plural, Masculine): " + thirdPronounMascPluralAcc;
+                        pronounContainerEl.appendChild(thirdPronounMascPluralAccEl);
+                        nomPronounsList.push(thirdPronounMascPluralAcc);
+                    }
+                    //Third Pronoun Feminine
+                    const thirdPronounFemEl = document.createElement("p");
+                    thirdPronounFem = generateShortWord(thirdPronounFem);
+                    thirdPronounFemEl.innerText = "Third Pronoun (she) (Feminine): " + thirdPronounFem;
+                    pronounContainerEl.appendChild(thirdPronounFemEl);
+                    nomPronounsList.push(thirdPronounFem);
+                    //Third Pronoun Feminine Accusative
+                    if (accBiz == 0) {
+                        const thirdPronounFemAccEl = document.createElement("p");
+                        thirdPronounFemAcc = generateShortWord(thirdPronounFemAcc);
+                        thirdPronounFemAccEl.innerText = "Third Pronoun (her) (Accusative, Feminine): " + thirdPronounFemAcc;
+                        pronounContainerEl.appendChild(thirdPronounFemAccEl);
+                        nomPronounsList.push(thirdPronounFemAcc);
+                    }
+                    //Third Pronoun Feminine Plural
+                    if (pluralBiz == 0) {
+                        const thirdPronounFemPluralEl = document.createElement("p");
+                        thirdPronounFemPlural = generateShortWord(thirdPronounFemPlural);
+                        thirdPronounFemPluralEl.innerText = "Third Pronoun (they) (Plural, Feminine): " + thirdPronounFemPlural;
+                        pronounContainerEl.appendChild(thirdPronounFemPluralEl);
+                        nomPronounsList.push(thirdPronounFemPlural);
+                    }
+                    //Third Pronoun Feminine Plural Accusative
+                    if (accBiz == 0 && pluralBiz == 0) {
+                        const thirdPronounFemPluralAccEl = document.createElement("p");
+                        thirdPronounFemPluralAcc = generateShortWord(thirdPronounFemPluralAcc);
+                        thirdPronounFemPluralAccEl.innerText = "Third Pronoun (them) (Accusative, Plural, Feminine): " + thirdPronounFemPluralAcc;
+                        pronounContainerEl.appendChild(thirdPronounFemPluralAccEl);
+                        nomPronounsList.push(thirdPronounFemPluralAcc);
+                    }
+                } else if (heShe == 1) {
+                    //Third Pronoun Human
+                    const thirdPronounMascEl = document.createElement("p");
+                    thirdPronounMasc = generateShortWord(thirdPronounMasc);
+                    thirdPronounMascEl.innerText = "Third Pronoun (he/she) (Human): " + thirdPronounMasc;
+                    pronounContainerEl.appendChild(thirdPronounMascEl);
+                    nomPronounsList.push(thirdPronounMasc);
+                    if (accBiz == 0) {
+                        //Third Pronoun Human Accusative
+                        const thirdPronounMascAccEl = document.createElement("p");
+                        thirdPronounMascAcc = generateShortWord(thirdPronounMascAcc);
+                        thirdPronounMascAccEl.innerText = "Third Pronoun (him/her) (Accusative, Human): " + thirdPronounMascAcc;
+                        pronounContainerEl.appendChild(thirdPronounMascAccEl);
+                        nomPronounsList.push(thirdPronounMascAcc);
+                    }
+                    //Third Pronoun Human Plural
+                    if (pluralBiz == 0) {
+                        const thirdPronounMascPluralEl = document.createElement("p");
+                        thirdPronounMascPlural = generateShortWord(thirdPronounMascPlural);
+                        thirdPronounMascPluralEl.innerText = "Third Pronoun (they) (Plural, Human): " + thirdPronounMascPlural;
+                        pronounContainerEl.appendChild(thirdPronounMascPluralEl);
+                        nomPronounsList.push(thirdPronounMascPlural);
+                    }
+                    //Third Pronoun Human Plural Accusative
+                    if (accBiz == 0 && pluralBiz == 0) {
+                        const thirdPronounMascPluralAccEl = document.createElement("p");
+                        thirdPronounMascPluralAcc = generateShortWord(thirdPronounMascPluralAcc);
+                        thirdPronounMascPluralAccEl.innerText = "Third Pronoun (them) (Accusative, Plural, Human): " + thirdPronounMascPluralAcc;
+                        pronounContainerEl.appendChild(thirdPronounMascPluralAccEl);
+                        nomPronounsList.push(thirdPronounPluralAcc);
+                    }
+                }
+                if (thirdPronounBiz == 1 && heShe == 2) {
+                    //Third Pronoun Human
+                    const thirdPronounMascEl = document.createElement("p");
+                    thirdPronounMasc = generateShortWord(thirdPronounMasc);
+                    thirdPronounMascEl.innerText = "Third Pronoun (it): " + thirdPronounMasc;
+                    pronounContainerEl.appendChild(thirdPronounMascEl);
+                    nomPronounsList.push(thirdPronounMasc);
+                    //Third Pronoun Human Accusative
+                    const thirdPronounMascAccEl = document.createElement("p");
+                    thirdPronounMascAcc = generateShortWord(thirdPronounMascAcc);
+                    thirdPronounMascAccEl.innerText = "Third Pronoun (it) (Accusative): " + thirdPronounMascAcc;
+                    pronounContainerEl.appendChild(thirdPronounMascAccEl);
+                    nomPronounsList.push(thirdPronounMascAcc);
+                    //Third Pronoun Human Plural
+                    const thirdPronounMascPluralEl = document.createElement("p");
+                    thirdPronounMascPlural = generateShortWord(thirdPronounMascPlural);
+                    thirdPronounMascPluralEl.innerText = "Third Pronoun (they) (Plural): " + thirdPronounMascPlural;
+                    pronounContainerEl.appendChild(thirdPronounMascPluralEl);
+                    nomPronounsList.push(thirdPronounMascPlural);
+                    //Third Pronoun Human Plural Accusative
+                    const thirdPronounMascPluralAccEl = document.createElement("p");
+                    thirdPronounMascPluralAcc = generateShortWord(thirdPronounMascPluralAcc);
+                    thirdPronounMascPluralAccEl.innerText = "Third Pronoun (them) (Accusative, Plural): " + thirdPronounMascPluralAcc;
+                    pronounContainerEl.appendChild(thirdPronounMascPluralAccEl);
+                    nomPronounsList.push(thirdPronounMascPluralAcc);
+                }
+                let nearFarBiz = Math.floor(Math.random() * 2);
+                if (nearFarBiz == 0 && thirdPronounBiz == 0) {
+                    //Third Pronoun Near
+                    const thirdPronounNearEl = document.createElement("p");
+                    thirdPronounNear = generateShortWord(thirdPronounNear);
+                    thirdPronounNearEl.innerText = "Third Pronoun (this) (Near): " + thirdPronounNear;
+                    pronounContainerEl.appendChild(thirdPronounNearEl);
+                    nomPronounsList.push(thirdPronounNear);
+                    //Third Pronoun Near Accusative
+                    if (accBiz == 0) {
+                        const thirdPronounNearAccEl = document.createElement("p");
+                        thirdPronounNearAcc = generateShortWord(thirdPronounNearAcc);
+                        thirdPronounNearAccEl.innerText = "Third Pronoun (this) (Accusative, Near): " + thirdPronounNearAcc;
+                        pronounContainerEl.appendChild(thirdPronounNearAccEl);
+                        nomPronounsList.push(thirdPronounNearAcc);
+                    }
+                    //Third Pronoun Near Plural
+                    if (pluralBiz == 0) {
+                        const thirdPronounNearPluralEl = document.createElement("p");
+                        thirdPronounNearPlural = generateShortWord(thirdPronounNearPlural);
+                        thirdPronounNearPluralEl.innerText = "Third Pronoun (these) (Plural, Near): " + thirdPronounNearPlural;
+                        pronounContainerEl.appendChild(thirdPronounNearPluralEl);
+                        nomPronounsList.push(thirdPronounNearPlural);
+                    }
+                    //Third Pronoun Near Plural Accusative
+                    if (accBiz == 0 && pluralBiz == 0) {
+                        const thirdPronounNearPluralAccEl = document.createElement("p");
+                        thirdPronounNearPluralAcc = generateShortWord(thirdPronounNearPluralAcc);
+                        thirdPronounNearPluralAccEl.innerText = "Third Pronoun (these) (Accusative, Plural, Near): " + thirdPronounNearPluralAcc;
+                        pronounContainerEl.appendChild(thirdPronounNearPluralAccEl);
+                        nomPronounsList.push(thirdPronounNearPluralAcc);
+                    }
+                    //Third Pronoun Far
+                    const thirdPronounFarEl = document.createElement("p");
+                    thirdPronounFar = generateShortWord(thirdPronounFar);
+                    thirdPronounFarEl.innerText = "Third Pronoun (that) (Far): " + thirdPronounFar;
+                    pronounContainerEl.appendChild(thirdPronounFarEl);
+                    nomPronounsList.push(thirdPronounFar);
+                    //Third Pronoun Near Accusative
+                    if (accBiz == 0) {
+                        const thirdPronounFarAccEl = document.createElement("p");
+                        thirdPronounFarAcc = generateShortWord(thirdPronounFarAcc);
+                        thirdPronounFarAccEl.innerText = "Third Pronoun (that) (Accusative, Far): " + thirdPronounFarAcc;
+                        pronounContainerEl.appendChild(thirdPronounFarAccEl);
+                        nomPronounsList.push(thirdPronounFarAcc);
+                    }
+                    //Third Pronoun Near Plural
+                    if (pluralBiz == 0) {
+                        const thirdPronounFarPluralEl = document.createElement("p");
+                        thirdPronounFarPlural = generateShortWord(thirdPronounFarPlural);
+                        thirdPronounFarPluralEl.innerText = "Third Pronoun (those) (Plural, Far): " + thirdPronounFarPlural;
+                        pronounContainerEl.appendChild(thirdPronounFarPluralEl);
+                        nomPronounsList.push(thirdPronounPlural);
+                    }
+                    //Third Pronoun Near Plural Accusative
+                    if (accBiz == 0 && pluralBiz == 0) {
+                        const thirdPronounFarPluralAccEl = document.createElement("p");
+                        thirdPronounFarPluralAcc = generateShortWord(thirdPronounFarPluralAcc);
+                        thirdPronounFarPluralAccEl.innerText = "Third Pronoun (those) (Accusative, Plural, Far): " + thirdPronounFarPluralAcc;
+                        pronounContainerEl.appendChild(thirdPronounFarPluralAccEl);
+                        nomPronounsList.push(thirdPronounFarPluralAcc);
+                    }
+                }
+                //GENERATE POSESSIVE PRONOUNS
+                const posessivePronounContainerEl = document.createElement("div");
+                posessivePronounContainerEl.classList.add("container");
+                displayerEl.appendChild(posessivePronounContainerEl);
+                const posessivePronounContainerHeadingEl = document.createElement("h2");
+                posessivePronounContainerHeadingEl.innerText = name + " Posessive Pronouns";
+                posessivePronounContainerHeadingEl.style.textTransform = "capitalize";
+                posessivePronounContainerEl.appendChild(posessivePronounContainerHeadingEl);
+                let posessiveWordsBiz = Math.floor(Math.random() * 2);
+                let posessiveBeforeAfter = Math.floor(Math.random() * 2);
+                const posessivePronounRuleEl = document.createElement("p");
+                if (posessiveWordsBiz == 0) {
+                    if (posessiveBeforeAfter == 0) {
+                        posessivePronounRuleEl.innerText = "In " + name + ", to show a pronoun having posession, you put the posessive pronoun before the object being posessed.";
+                    } else {
+                        posessivePronounRuleEl.innerText = "In " + name + ", to show a pronoun having posession, you put the posessive pronoun after the object being posessed.";
+                    }
+                } else {
+                    if (posessiveBeforeAfter == 0) {
+                        posessivePronounRuleEl.innerText = name + " has no posessive pronouns; to show posession, put the pronoun before the object being posessed.";
+                    } else {
+                        posessivePronounRuleEl.innerText = name + " has no posessive pronouns; to show posession, put the pronoun after the object being posessed.";
+                    }
+                }
+                posessivePronounRuleEl.style.textTransform = "capitalize";
+                posessivePronounContainerEl.appendChild(posessivePronounRuleEl);
+                if (posessiveWordsBiz == 0) {
+                    const posessivePronounsListEl = document.createElement("ul");
+                    for (let i = 0; i < nomPronounsList.length; i++) {
+                        let newPosessivePronounEl = document.createElement("li");
+                        let newPosessivePronoun;
+                        newPosessivePronoun = generateShortWord(newPosessivePronoun);
+                        newPosessivePronounEl.innerText = newPosessivePronoun + " is the posessive version of " + nomPronounsList[i];
+                        posessivePronounsListEl.appendChild(newPosessivePronounEl);
+                    }
+                    posessivePronounsListEl.style.textAlign = "left";
+                    posessivePronounsListEl.style.marginLeft = "100px";
+                    posessivePronounContainerEl.appendChild(posessivePronounsListEl);
+                }
+                //Generate Other Posessive
+                const otherPosessionRuleEl = document.createElement("p");
+                let otherPosessionBiz = Math.floor(Math.random() * 2);
+                posession = generateWord(posession);
+                if (otherPosessionBiz == 0) {
+                    let posessionFix = Math.floor(Math.random() * 2);
+                    let posessionPos = Math.floor(Math.random() * 2);
+                    let posessorPosessed = Math.floor(Math.random() * 2);
+                    if (posessionFix == 0 && posessionPos == 0 && posessorPosessed == 0) {
+                        otherPosessionRuleEl.innerText = "In " + name + ", to show posession, you append " + posession + "- to the posessor.";
+                    } else if (posessionFix == 1 && posessionPos == 0 && posessorPosessed == 0) {
+                        otherPosessionRuleEl.innerText = "In " + name + ", to show posession, you put the word " + posession + " before the posessor.";
+                    } else if (posessionFix == 0 && posessionPos == 1 && posessorPosessed == 0) {
+                        otherPosessionRuleEl.innerText = "In " + name + ", to show posession, you append -" + posession + " to the posessor.";
+                    } else if (posessionFix == 0 && posessionPos == 0 && posessorPosessed == 1) {
+                        otherPosessionRuleEl.innerText = "In " + name + ", to show posession, you append " + posession + "- to the posessed.";
+                    } else if (posessionFix == 1 && posessionPos == 1 && posessorPosessed == 0) {
+                        otherPosessionRuleEl.innerText = "In " + name + ", to show posession, you append -" + posession + " to the posessor.";
+                    } else if (posessionFix == 0 && posessionPos == 1 && posessorPosessed == 1) {
+                        otherPosessionRuleEl.innerText = "In " + name + ", to show posession, you put the word " + posession + " after the posessed.";
+                    } else if (posessionFix == 1 && posessionPos == 0 && posessorPosessed == 1) {
+                        otherPosessionRuleEl.innerText = "In " + name + ", to show posession, you append " + posession + "- to the posessed.";
+                    } else if (posessionFix == 1 && posessionPos == 1 && posessorPosessed == 1) {
+                        otherPosessionRuleEl.innerText = "In " + name + ", to show posession, you append -" + posession + " to the posessed.";
+                    }
+                } else {
+                    let posessPos = Math.floor(Math.random() * 2);
+                    if (posessPos == 0) {
+                        otherPosessionRuleEl.innerText = "In " + name + ", to show posession, you put the noun that posesses the other before it.";
+                    } else {
+                        otherPosessionRuleEl.innerText = "In " + name + ", to show posession, you put the noun that posesses the other after it.";
+                    }
+                }
+                otherPosessionRuleEl.style.textTransform = "capitalize";
+                posessivePronounContainerEl.appendChild(otherPosessionRuleEl);
+                const articleContainerEl = document.createElement("div");
+                articleContainerEl.classList.add("container");
+                displayerEl.appendChild(articleContainerEl);
+                const articleContainerHeadingEl = document.createElement("h2");
+                articleContainerHeadingEl.innerText = name + " Articles";
+                articleContainerHeadingEl.style.textTransform = "capitalize";
+                articleContainerEl.appendChild(articleContainerHeadingEl);
+                let articlesBiz = Math.floor(Math.random() * 2);
+                if (articlesBiz == 0) {
+                    let articlePluralBiz = Math.floor(Math.random() * 2);
+                    let articlesGendersBiz = Math.floor(Math.random() * 10);
+                    let indefiniteBiz = Math.floor(Math.random() * 2);
+                    //Definite
+                    const definiteEl = document.createElement("p");
+                    definite = generateTinyWord(definite);
+                    let articleIsFix = Math.floor(Math.random() * 2);
+                    let fixPos = Math.floor(Math.random() * 2);
+                    if (articleIsFix == 0) {
+                        if (fixPos == 0) {
+                            definite = "-" + definite;
+                        } else {
+                            definite = definite + "-";
+                        }
+                    } else {
+                        const articlePosExEl = document.createElement("p");
+                        let articlePos = Math.floor(Math.random() * 2);
+                        if (articlePos == 0) {
+                            articlePosExEl.innerText = "In " + name + ", articles come before the noun.";
+                            articlePosExEl.style.textTransform = "capitalize";
+                        } else {
+                            articlePosExEl.innerText = "In " + name + ", articles come after the noun.";
+                            articlePosExEl.style.textTransform = "capitalize";
+                        }
+                        articleContainerEl.appendChild(articlePosExEl);
+                    }
+                    definiteEl.innerText = "Definite Article: " + definite;
+                    articleContainerEl.appendChild(definiteEl);
+                    //Definite Plural
+                    if (articlePluralBiz == 0) {
+                        const definitePluralEl = document.createElement("p");
+                        definitePlural = generateTinyWord(definitePlural);
+                        if (articleIsFix == 0) {
+                            if (fixPos == 0) {
+                                definitePlural = "-" + definitePlural;
+                            } else {
+                                definitePlural = definitePlural + "-";
+                            }
+                        }
+                        definitePluralEl.innerText = "Definite Article (Plural): " + definitePlural;
+                        articleContainerEl.appendChild(definitePluralEl);
+                    }
+                    //Definite Feminine
+                    if (articlesGendersBiz == 0) {
+                        const definiteFemEl = document.createElement("p");
+                        definiteFem = generateTinyWord(definiteFem);
+                        if (articleIsFix == 0) {
+                            if (fixPos == 0) {
+                                definiteFem = "-" + definiteFem;
+                            } else {
+                                definiteFem = definiteFem + "-";
+                            }
+                        }
+                        definiteFemEl.innerText = "Definite Article (Feminine): " + definiteFem;
+                        articleContainerEl.appendChild(definiteFemEl);
+                    }
+                    //Definite Plural Feminine
+                    if (articlePluralBiz == 0 && articlesGendersBiz == 0) {
+                        const definitePluralFemEl = document.createElement("p");
+                        definitePluralFem = generateTinyWord(definitePluralFem);
+                        if (articleIsFix == 0) {
+                            if (fixPos == 0) {
+                                definitePluralFem = "-" + definitePluralFem;
+                            } else {
+                                definitePluralFem = definitePluralFem + "-";
+                            }
+                        }
+                        definitePluralFemEl.innerText = "Definite Article (Plural, Feminine): " + definitePluralFem;
+                        articleContainerEl.appendChild(definitePluralFemEl);
+                    }
+                    //Indefinite
+                    if (indefiniteBiz == 0) {
+                        const indefiniteEl = document.createElement("p");
+                        indefinite = generateTinyWord(indefinite);
+                        if (articleIsFix == 0) {
+                            if (fixPos == 0) {
+                                indefinite = "-" + indefinite;
+                            } else {
+                                indefinite = indefinite + "-";
+                            }
+                        }
+                        indefiniteEl.innerText = "Indefinite Article: " + indefinite;
+                        articleContainerEl.appendChild(indefiniteEl);
+                    }
+                    //Indefinite Plural
+                    if (indefiniteBiz == 0 && articlePluralBiz == 0) {
+                        const indefinitePluralEl = document.createElement("p");
+                        indefinitePlural = generateTinyWord(indefinitePlural);
+                        if (articleIsFix == 0) {
+                            if (fixPos == 0) {
+                                indefinitePlural = "-" + indefinitePlural;
+                            } else {
+                                indefinitePlural = indefinitePlural + "-";
+                            }
+                        }
+                        indefinitePluralEl.innerText = "Indefinite Article (Plural): " + indefinitePlural;
+                        articleContainerEl.appendChild(indefinitePluralEl);
+                    }
+                    //Indefinite Feminine
+                    if (indefiniteBiz == 0 && articlesGendersBiz == 0) {
+                        const indefiniteFemEl = document.createElement("p");
+                        indefiniteFem = generateTinyWord(indefiniteFem);
+                        if (articleIsFix == 0) {
+                            if (fixPos == 0) {
+                                indefiniteFem = "-" + indefiniteFem;
+                            } else {
+                                indefiniteFem = indefiniteFem + "-";
+                            }
+                        }
+                        indefiniteFemEl.innerText = "Indefinite Article (Feminine): " + indefiniteFem;
+                        articleContainerEl.appendChild(indefiniteFemEl);
+                    }
+                    //Indefinite Plural Feminine
+                    if (indefiniteBiz == 0 && articlesGendersBiz == 0 && articlePluralBiz == 0) {
+                        const indefinitePluralFemEl = document.createElement("p");
+                        indefinitePluralFem = generateTinyWord(indefinitePluralFem);
+                        if (articleIsFix == 0) {
+                            if (fixPos == 0) {
+                                indefinitePluralFem = "-" + indefinitePluralFem;
+                            } else {
+                                indefinitePluralFem = indefinitePluralFem + "-";
+                            }
+                        }
+                        indefinitePluralFemEl.innerText = "Indefinite Article (Plural, Feminine): " + indefinitePluralFem;
+                        articleContainerEl.appendChild(indefinitePluralFemEl);
+                    }
+                } else {
+                    let articlesRuleEl = document.createElement("p");
+                    articlesRuleEl.style.textTransform = "capitalize";
+                    articlesRuleEl.innerText = name + " has no articles.";
+                    articleContainerEl.appendChild(articlesRuleEl);
+                }
+                //HOW TO FORM THE PLURAL
+                const pluralContainerEl = document.createElement("div");
+                pluralContainerEl.classList.add("container");
+                displayerEl.appendChild(pluralContainerEl);
+                const pluralContainerHeadingEl = document.createElement("h2");
+                pluralContainerHeadingEl.innerText = "How to form the plural in " + name;
+                pluralContainerHeadingEl.style.textTransform = "capitalize";
+                pluralContainerEl.appendChild(pluralContainerHeadingEl);
+                const pluralRuleEl = document.createElement("p");
+                let hasPlural = Math.floor(Math.random() * 2);
+                if (hasPlural == 0) {
+                    let pluralDouble = Math.floor(Math.random() * 2);
+                    if (pluralDouble == 0) {
+                        pluralRuleEl.innerText = "In " + name + ", you double a noun and put a '-' between to form the plural.";
+                    } else {
+                        plural = generateTinyWord(plural);
+                        let pluralWord = Math.floor(Math.random() * 2);
+                        let pluralPos = Math.floor(Math.random() * 2);
+                        if (pluralWord == 0 && pluralPos == 0) {
+                            pluralRuleEl.innerText = "In " + name + ", you put the word '" + plural + "' before the noun to form the plural.";
+                        } else if (pluralWord == 0 && pluralPos == 1) {
+                            pluralRuleEl.innerText = "In " + name + ", you put the word '" + plural + "' after the noun to form the plural.";
+                        } else if (pluralWord == 1 && pluralPos == 0) {
+                            pluralRuleEl.innerText = "In " + name + ", you append " + plural + "- to the noun to form the plural.";
+                        } else {
+                            pluralRuleEl.innerText = "In " + name + ", you append -" + plural + " to the noun to form the plural.";
+                        }
+                    }
+                } else {
+                    pluralRuleEl.innerText = "In " + name + ", there is no way to form the plural. The plural nouns are the same as the singular nouns.";
+                }
+                pluralRuleEl.style.textTransform = "capitalize";
+                pluralContainerEl.appendChild(pluralRuleEl);
+                //VERBS 
+                const verbContainerEl = document.createElement("div");
+                verbContainerEl.classList.add("container");
+                displayerEl.appendChild(verbContainerEl);
+                const verbContainerHeadingEl = document.createElement("h2");
+                verbContainerHeadingEl.innerText = name + " Verbs";
+                verbContainerHeadingEl.style.textTransform = "capitalize";
+                verbContainerEl.appendChild(verbContainerHeadingEl);
+                //Gerund
+                const gerundRuleEl = document.createElement("p");
+                let gerundBiz = Math.floor(Math.random() * 2);
+                if (gerundBiz == 0) {
+                    gerund = generateTinyWord(gerund);
+                    let gerundWord = Math.floor(Math.random() * 2);
+                    let gerundPos = Math.floor(Math.random() * 2);
+                    if (gerundWord == 0 && gerundPos == 0) {
+                        gerundRuleEl.innerText = "In " + name + ", you put the word '" + gerund + "' before the verb to form its gerund version.";
+                    } else if (gerundWord == 0 && gerundPos == 1) {
+                        gerundRuleEl.innerText = "In " + name + ", you put the word '" + gerund + "' after the verb to form its gerund version.";
+                    } else if (gerundWord == 1 && gerundPos == 0) {
+                        gerundRuleEl.innerText = "In " + name + ", you append " + gerund + "- to the verb to form its gerund version.";
+                    } else {
+                        gerundRuleEl.innerText = "In " + name + ", you append -" + gerund + " to the verb to form its gerund version.";
+                    }
+                } else {
+                    gerundRuleEl.innerText = "In " + name + ", the gerund verbs are the same as the normal verbs.";
+                }
+                gerundRuleEl.style.textTransform = "capitalize";
+                verbContainerEl.appendChild(gerundRuleEl);
+                //Command
+                const commandRuleEl = document.createElement("p");
+                let commandBiz = Math.floor(Math.random() * 2);
+                if (commandBiz == 0) {
+                    command = generateTinyWord(command);
+                    let commandWord = Math.floor(Math.random() * 2);
+                    let commandPos = Math.floor(Math.random() * 2);
+                    if (commandWord == 0 && commandPos == 0) {
+                        commandRuleEl.innerText = "In " + name + ", you put the word '" + command + "' before the verb to form its imperative version.";
+                    } else if (commandWord == 0 && commandPos == 1) {
+                        commandRuleEl.innerText = "In " + name + ", you put the word '" + command + "' after the verb to form its imperative version.";
+                    } else if (commandWord == 1 && commandPos == 0) {
+                        commandRuleEl.innerText = "In " + name + ", you append " + command + "- to the verb to form its imperative version.";
+                    } else {
+                        commandRuleEl.innerText = "In " + name + ", you append -" + command + " to the verb to form its imperative version.";
+                    }
+                } else {
+                    commandRuleEl.innerText = "In " + name + ", the imperative verbs are the same as the normal verbs.";
+                }
+                commandRuleEl.style.textTransform = "capitalize";
+                verbContainerEl.appendChild(commandRuleEl);
+                //Progressive
+                const progressiveRuleEl = document.createElement("p");
+                let progressiveBiz = Math.floor(Math.random() * 2);
+                if (progressiveBiz == 0) {
+                    progressive = generateTinyWord(progressive);
+                    let progressiveWord = Math.floor(Math.random() * 2);
+                    let progressivePos = Math.floor(Math.random() * 2);
+                    if (progressiveWord == 0 && progressivePos == 0) {
+                        progressiveRuleEl.innerText = "In " + name + ", you put the word '" + progressive + "' before the verb to form its progressive tense.";
+                    } else if (progressiveWord == 0 && progressivePos == 1) {
+                        progressiveRuleEl.innerText = "In " + name + ", you put the word '" + progressive + "' after the verb to form its progressive tense.";
+                    } else if (progressiveWord == 1 && progressivePos == 0) {
+                        progressiveRuleEl.innerText = "In " + name + ", you append " + progressive + "- to the verb to form its progressive tense.";
+                    } else {
+                        progressiveRuleEl.innerText = "In " + name + ", you append -" + progressive + " to the verb to form its progressive tense.";
+                    }
+                } else {
+                    progressiveRuleEl.innerText = "In " + name + ", the progressive verbs are the same as the normal verbs.";
+                }
+                progressiveRuleEl.style.textTransform = "capitalize";
+                verbContainerEl.appendChild(progressiveRuleEl);
+                //Past
+                const pastRuleEl = document.createElement("p");
+                past = generateTinyWord(past);
+                let pastWord = Math.floor(Math.random() * 2);
+                let pastPos = Math.floor(Math.random() * 2);
+                if (pastWord == 0 && pastPos == 0) {
+                    pastRuleEl.innerText = "In " + name + ", you put the word '" + past + "' before the verb to form its past tense.";
+                } else if (pastWord == 0 && pastPos == 1) {
+                    pastRuleEl.innerText = "In " + name + ", you put the word '" + past + "' after the verb to form its past tense.";
+                } else if (pastWord == 1 && pastPos == 0) {
+                    pastRuleEl.innerText = "In " + name + ", you append " + past + "- to the verb to form its past tense.";
+                } else {
+                    pastRuleEl.innerText = "In " + name + ", you append -" + past + " to the verb to form its past tense.";
+                }
+                pastRuleEl.style.textTransform = "capitalize";
+                verbContainerEl.appendChild(pastRuleEl);
+                //Future
+                const futureRuleEl = document.createElement("p");
+                future = generateTinyWord(future);
+                let futureWord = Math.floor(Math.random() * 2);
+                let futurePos = Math.floor(Math.random() * 2);
+                if (futureWord == 0 && futurePos == 0) {
+                    futureRuleEl.innerText = "In " + name + ", you put the word '" + future + "' before the verb to form its future tense.";
+                } else if (futureWord == 0 && futurePos == 1) {
+                    futureRuleEl.innerText = "In " + name + ", you put the word '" + future + "' after the verb to form its future tense.";
+                } else if (futureWord == 1 && futurePos == 0) {
+                    futureRuleEl.innerText = "In " + name + ", you append " + future + "- to the verb to form its future tense.";
+                } else {
+                    futureRuleEl.innerText = "In " + name + ", you append -" + future + " to the verb to form its future tense.";
+                }
+                futureRuleEl.style.textTransform = "capitalize";
+                verbContainerEl.appendChild(futureRuleEl);
+                let perspectiveBiz = Math.floor(Math.random() * 2);
+                let perspectivePos = Math.floor(Math.random() * 2);
+                if (perspectiveBiz == 0) {
+                    //Perspectives
+                    const firstPerspectiveRuleEl = document.createElement("p");
+                    const secondPerspectiveRuleEl = document.createElement("p");
+                    const thirdPerspectiveRuleEl = document.createElement("p");
+                    firstPerspective = generateTinyWord(firstPerspective);
+                    secondPerspective = generateTinyWord(secondPerspective);
+                    thirdPerspective = generateTinyWord(thirdPerspective);
+                    if (perspectivePos == 0) {
+                        firstPerspectiveRuleEl.innerText = "In " + name + ", you append " + firstPerspective + "- to the verb to form the first perspective.";
+                        secondPerspectiveRuleEl.innerText = "In " + name + ", you append " + secondPerspective + "- to the verb to form the second perspective.";
+                        thirdPerspectiveRuleEl.innerText = "In " + name + ", you append " + thirdPerspective + "- to the verb to form the third perspective.";
+                    } else {
+                        firstPerspectiveRuleEl.innerText = "In " + name + ", you append -" + firstPerspective + " to the verb to form the first perspective.";
+                        secondPerspectiveRuleEl.innerText = "In " + name + ", you append -" + secondPerspective + " to the verb to form the second perspective.";
+                        thirdPerspectiveRuleEl.innerText = "In " + name + ", you append -" + thirdPerspective + " to the verb to form the third perspective.";
+                    }
+                    firstPerspectiveRuleEl.style.textTransform = "capitalize";
+                    secondPerspectiveRuleEl.style.textTransform = "capitalize";
+                    thirdPerspectiveRuleEl.style.textTransform = "capitalize";
+                    verbContainerEl.appendChild(firstPerspectiveRuleEl);
+                    verbContainerEl.appendChild(secondPerspectiveRuleEl);
+                    verbContainerEl.appendChild(thirdPerspectiveRuleEl);
+                }
+                let pluralPerspectiveBiz = Math.floor(Math.random() * 2);
+                let pluralPerspectivePos = Math.floor(Math.random() * 2);
+                if (pluralPerspectiveBiz == 0) {
+                    //Plural Perspectives
+                    const pluralPerspectiveRuleEl = document.createElement("p");
+                    pluralPerspective = generateTinyWord(firstPerspective);
+                    if (pluralPerspectivePos == 0) {
+                        pluralPerspectiveRuleEl.innerText = "In " + name + ", you append " + pluralPerspective + "- to the verb to form the plural perspective.";
+                    } else {
+                        pluralPerspectiveRuleEl.innerText = "In " + name + ", you append -" + pluralPerspective + " to the verb to form the plural perspective.";
+                    }
+                    pluralPerspectiveRuleEl.style.textTransform = "capitalize";
+                    verbContainerEl.appendChild(pluralPerspectiveRuleEl);
+                }
+                const tobeContainerEl = document.createElement("div");
+                tobeContainerEl.classList.add("container");
+                displayerEl.appendChild(tobeContainerEl);
+                const tobeContainerHeadingEl = document.createElement("h2");
+                tobeContainerHeadingEl.innerText = "The verb 'to be' in " + name;
+                tobeContainerHeadingEl.style.textTransform = "capitalize";
+                tobeContainerEl.appendChild(tobeContainerHeadingEl);
+                const tobeRuleEl = document.createElement("p");
+                let hasTobe = Math.floor(Math.random() * 2);
+                if (hasTobe == 0) {
+                    let tobeIsPhrase = Math.floor(Math.random() * 2);
+                    if (tobeIsPhrase == 0) {
+                        iam = generateShortWord(iam);
+                        youare = generateShortWord(youare);
+                        itis = generateShortWord(itis);
+                        tobeRuleEl.innerText = "In " + name + ", there is no verb for to be; but instead has phrases for I am, you are and it is which are these accordingly: " + iam + ", " + youare + ", and" + itis + ".";
+                    } else {
+                        let tobeDiff = Math.floor(Math.random() * 2);
+                        if (tobeDiff == 0) {
+                            let theyareBiz = Math.floor(Math.random() * 2);
+                            if (theyareBiz == 0) {
+                                iam = generateShortWord(iam);
+                                youare = generateShortWord(youare);
+                                itis = generateShortWord(itis);
+                                tobeRuleEl.innerText = "In " + name + ", there are three ways to say the verb 'to be' for the three different perspectives which are accordingly: " + iam + ", " + youare + " and " + itis + ".";
+                            } else {
+                                iam = generateShortWord(iam);
+                                youare = generateShortWord(youare);
+                                itis = generateShortWord(itis);
+                                theyare = generateShortWord(theyare);
+                                tobeRuleEl.innerText = "In " + name + ", there are four ways to say the verb 'to be' for the three different perspectives and for plural which are accordingly: " + iam + ", " + youare + ", " + itis + " and " + theyare + ".";
+                            }
+                        } else {
+                            tobe = generateShortWord(tobe);
+                            tobeRuleEl.innerText = "In " + name + ", there is one word for 'to be' which is " + tobe + ".";
+                        }
+                    }
+                } else {
+                    tobeRuleEl.innerText = name + " has no verb for tobe; for 'I am here' you just say 'I here'";
+                }
+                tobeRuleEl.style.textTransform = "capitalize";
+                tobeContainerEl.appendChild(tobeRuleEl);
+                //QUESTIONS
+                const questionContainerEl = document.createElement("div");
+                questionContainerEl.classList.add("container");
+                displayerEl.appendChild(questionContainerEl);
+                const questionContainerHeadingEl = document.createElement("h2");
+                questionContainerHeadingEl.innerText = "How do I ask questions in " + name + "?";
+                questionContainerHeadingEl.style.textTransform = "capitalize";
+                questionContainerEl.appendChild(questionContainerHeadingEl);
+                const questionRuleEl = document.createElement("p");
+                let questionMethod = Math.floor(Math.random() * 2);
+                if (questionMethod == 0) {
+                    questionRuleEl.innerText = "In " + name + ", you ask questions the same as you do statements but with a rising tone.";
+                } else {
+                    question = generateShortWord(question);
+                    let questionPos = Math.floor(Math.random() * 2);
+                    if (questionPos == 0) {
+                        questionRuleEl.innerText = "In " + name + ", you ask questions the same as you do statements but with the word " + question + " at the beginning.";
+                    } else {
+                        questionRuleEl.innerText = "In " + name + ", you ask questions the same as you do statements but with the word " + question + " at the end.";
+                    }
+                }
+                questionRuleEl.style.textTransform = "capitalize";
+                questionContainerEl.appendChild(questionRuleEl);
+                const questionWordsRuleEl = document.createElement("p");
+                let questionWordPos = Math.floor(Math.random() * 2);
+                if (questionWordPos == 0) {
+                    questionWordsRuleEl.innerText = "In " + name + ", you put question words before the question.";
+                } else {
+                    questionWordsRuleEl.innerText = "In " + name + ", you put question words after the question.";
+                }
+                questionWords = [];
+                questionWordsRuleEl.style.textTransform = "capitalize";
+                questionContainerEl.appendChild(questionWordsRuleEl);
+                const questionWordsListEl = document.createElement("ul");
+                questionWordsListEl.style.textAlign = "left";
+                questionWordsListEl.style.marginLeft = "100px";
+                let questionWordsLick = Math.floor(Math.random() * 2);
+                let questionLick = consonants[Math.floor(Math.random() * consonants.length)];
+                for (let i = 0; i < englishQuestionWords.length; i++) {
+                    let newQuestionWordEl = document.createElement("li");
+                    let newQuestionWord;
+                    newQuestionWord = generateShortWord(newQuestionWord);
+                    if (questionWordsLick == 0) {
+                        newQuestionWord = questionLick + newQuestionWord;
+                    }
+                    questionWords.push(newQuestionWord);
+                    newQuestionWordEl.innerText = newQuestionWord + ": " + englishQuestionWords[i];
+                    questionWordsListEl.appendChild(newQuestionWordEl);
+                }
+                questionContainerEl.appendChild(questionWordsListEl);
+                //DICTIONARY
+                const dictionaryContainerEl = document.createElement("div");
+                dictionaryContainerEl.classList.add("container");
+                displayerEl.appendChild(dictionaryContainerEl);
+                const dictionaryContainerHeadingEl = document.createElement("h2");
+                dictionaryContainerHeadingEl.innerText = name + " Dictionary";
+                dictionaryContainerHeadingEl.style.textTransform = "capitalize";
+                dictionaryContainerEl.appendChild(dictionaryContainerHeadingEl);
+                for (let i = 0; i < englishWords.length + englishShortWords.length; i++) {
+                    let newWord;
+                    newWord = generateWord(newWord);
+                    if (newWord.length < 3) {
+                        newWord = newWord + ": " + englishShortWords[Math.floor(Math.random() * englishShortWords.length)];
+                    } else {
+                        newWord = newWord + ": " + englishWords[Math.floor(Math.random() * englishWords.length)];
+                    }
+                    dictionary.push(newWord);
+                }
+                dictionary.sort();
+                for (let i = 0; i < dictionary.length; i++) {
+                    let newWordEl = document.createElement("p");
+                    newWordEl.innerText = dictionary[i];
+                    dictionaryContainerEl.appendChild(newWordEl);
+                }
+            } else {
+                alert("You need atleast one consonant and one vowel!");
+            }
+        }
+
+        function randomizeVowels() {
+            vowels = [];
+            let hasA = Math.floor(Math.random() * 10);
+            let hasI = Math.floor(Math.random() * 10);
+            let hasU = Math.floor(Math.random() * 10);
+            let hasE = Math.floor(Math.random() * 5);
+            let hasO = Math.floor(Math.random() * 5);
+            let hasY = Math.floor(Math.random() * 2);
+            let longVowels = Math.floor(Math.random() * 2);
+            if (hasA != 0) {
+                vowels.push("a");
+                if (longVowels == 0) {
+                    vowels.push("ā");
+                }
+                let acute = Math.floor(Math.random() * 25);
+                if (acute == 0) {
+                    vowels.push("á");
+                }
+                let grave = Math.floor(Math.random() * 25);
+                if (grave == 0) {
+                    vowels.push("à");
+                }
+                let umlaut = Math.floor(Math.random() * 25);
+                if (umlaut == 0) {
+                    vowels.push("ä");
+                }
+                let breve = Math.floor(Math.random() * 25);
+                if (breve == 0) {
+                    vowels.push("ă");
+                }
+                let ring = Math.floor(Math.random() * 25);
+                if (ring == 0) {
+                    vowels.push("å");
+                }
+            }
+            if (hasI != 0) {
+                vowels.push("i");
+                if (longVowels == 0) {
+                    vowels.push("ī");
+                }
+                let acute = Math.floor(Math.random() * 25);
+                if (acute == 0) {
+                    vowels.push("í");
+                }
+                let grave = Math.floor(Math.random() * 25);
+                if (grave == 0) {
+                    vowels.push("ì");
+                }
+                let umlaut = Math.floor(Math.random() * 25);
+                if (umlaut == 0) {
+                    vowels.push("ï");
+                }
+                let breve = Math.floor(Math.random() * 25);
+                if (breve == 0) {
+                    vowels.push("ĭ");
+                }
+                let ring = Math.floor(Math.random() * 25);
+                if (ring == 0) {
+                    vowels.push("i̊");
+                }
+            }
+            if (hasU != 0) {
+                vowels.push("u");
+                if (longVowels == 0) {
+                    vowels.push("ū");
+                }
+                let acute = Math.floor(Math.random() * 25);
+                if (acute == 0) {
+                    vowels.push("ú");
+                }
+                let grave = Math.floor(Math.random() * 25);
+                if (grave == 0) {
+                    vowels.push("ù");
+                }
+                let umlaut = Math.floor(Math.random() * 25);
+                if (umlaut == 0) {
+                    vowels.push("ü");
+                }
+                let breve = Math.floor(Math.random() * 25);
+                if (breve == 0) {
+                    vowels.push("ŭ");
+                }
+                let ring = Math.floor(Math.random() * 25);
+                if (ring == 0) {
+                    vowels.push("ů");
+                }
+            }
+            if (hasE != 0) {
+                vowels.push("e");
+                if (longVowels == 0) {
+                    vowels.push("ē");
+                }
+                let acute = Math.floor(Math.random() * 25);
+                if (acute == 0) {
+                    vowels.push("é");
+                }
+                let grave = Math.floor(Math.random() * 25);
+                if (grave == 0) {
+                    vowels.push("è");
+                }
+                let umlaut = Math.floor(Math.random() * 25);
+                if (umlaut == 0) {
+                    vowels.push("ë");
+                }
+                let breve = Math.floor(Math.random() * 25);
+                if (breve == 0) {
+                    vowels.push("ĕ");
+                }
+                let ring = Math.floor(Math.random() * 25);
+                if (ring == 0) {
+                    vowels.push("e̊");
+                }
+            }
+            if (hasO != 0) {
+                vowels.push("o");
+                if (longVowels == 0) {
+                    vowels.push("ō");
+                }
+                let acute = Math.floor(Math.random() * 25);
+                if (acute == 0) {
+                    vowels.push("ó");
+                }
+                let grave = Math.floor(Math.random() * 25);
+                if (grave == 0) {
+                    vowels.push("ò");
+                }
+                let umlaut = Math.floor(Math.random() * 25);
+                if (umlaut == 0) {
+                    vowels.push("ö");
+                }
+                let breve = Math.floor(Math.random() * 25);
+                if (breve == 0) {
+                    vowels.push("ŏ");
+                }
+                let ring = Math.floor(Math.random() * 25);
+                if (ring == 0) {
+                    vowels.push("o̊");
+                }
+            }
+            if (hasY == 0) {
+                vowels.push("y");
+                if (longVowels == 0) {
+                    vowels.push("ȳ");
+                }
+                let acute = Math.floor(Math.random() * 25);
+                if (acute == 0) {
+                    vowels.push("ý");
+                }
+                let grave = Math.floor(Math.random() * 25);
+                if (grave == 0) {
+                    vowels.push("ỳ");
+                }
+                let umlaut = Math.floor(Math.random() * 25);
+                if (umlaut == 0) {
+                    vowels.push("ÿ");
+                }
+                let breve = Math.floor(Math.random() * 25);
+                if (breve == 0) {
+                    vowels.push("y̆");
+                }
+                let ring = Math.floor(Math.random() * 25);
+                if (ring == 0) {
+                    vowels.push("ẙ");
+                }
+            }
+        }
+
+        function randomizeConsonants() {
+            consonants = [];
+            let hasK = Math.floor(Math.random() * 10);
+            let hasG = Math.floor(Math.random() * 5);
+            let hasT = Math.floor(Math.random() * 10);
+            let hasD = Math.floor(Math.random() * 5);
+            let hasP = Math.floor(Math.random() * 10);
+            let hasB = Math.floor(Math.random() * 5);
+            let hasM = Math.floor(Math.random() * 10);
+            let hasN = Math.floor(Math.random() * 10);
+            let hasNG = Math.floor(Math.random() * 5);
+            let hasW = Math.floor(Math.random() * 5);
+            let hasL = Math.floor(Math.random() * 5);
+            let hasY = Math.floor(Math.random() * 5);
+            let hasF = Math.floor(Math.random() * 3);
+            let hasV = Math.floor(Math.random() * 2);
+            let hasS = Math.floor(Math.random() * 3);
+            let hasZ = Math.floor(Math.random() * 2);
+            let hasH = Math.floor(Math.random() * 3);
+            let hasC = Math.floor(Math.random() * 2);
+            let hasJ = Math.floor(Math.random() * 2);
+            let hasR = Math.floor(Math.random() * 2);
+            let hasQ = Math.floor(Math.random() * 2);
+            let hasX = Math.floor(Math.random() * 10);
+            let hasGT = Math.floor(Math.random() * 2);
+            if (hasK != 1) {
+                consonants.push("k");
+                let hasKH = Math.floor(Math.random() * 10);
+                let hasKacc = Math.floor(Math.random() * 25);
+                if (hasKH == 0) {
+                    consonants.push("kh");
+                }
+                if (hasKacc == 0) {
+                    consonants.push("k̦");
+                }
+            }
+            if (hasG != 1) {
+                consonants.push("g");
+                let hasGH = Math.floor(Math.random() * 10);
+                let hasGacc = Math.floor(Math.random() * 25);
+                let hasGaccTwo = Math.floor(Math.random() * 25);
+                if (hasGH == 0) {
+                    consonants.push("gh");
+                }
+                if (hasGacc == 0) {
+                    consonants.push("ğ");
+                }
+                if (hasGaccTwo == 0) {
+                    consonants.push("g̦");
+                }
+            }
+            if (hasT != 1) {
+                consonants.push("t");
+                let hasTH = Math.floor(Math.random() * 5);
+                let hasTacc = Math.floor(Math.random() * 5);
+                if (hasTH == 0) {
+                    consonants.push("th");
+                }
+                if (hasTacc == 0) {
+                    consonants.push("ṭ");
+                }
+            }
+            if (hasD != 1) {
+                consonants.push("d");
+                let hasDH = Math.floor(Math.random() * 5);
+                let hasDacc = Math.floor(Math.random() * 5);
+                if (hasDH == 0) {
+                    consonants.push("dh");
+                }
+                if (hasDacc == 0) {
+                    consonants.push("ḍ");
+                }
+            }
+            if (hasP != 1) {
+                consonants.push("p");
+                let hasPH = Math.floor(Math.random() * 10);
+                let hasPacc = Math.floor(Math.random() * 10);
+                if (hasPH == 0) {
+                    consonants.push("ph");
+                }
+                if (hasPacc == 0) {
+                    consonants.push("p̌");
+                }
+            }
+            if (hasB != 1) {
+                consonants.push("b");
+                let hasBH = Math.floor(Math.random() * 10);
+                let hasBacc = Math.floor(Math.random() * 10);
+                if (hasBH == 0) {
+                    consonants.push("bh");
+                }
+                if (hasBacc == 0) {
+                    consonants.push("b̌");
+                }
+            }
+            if (hasM != 1) {
+                consonants.push("m");
+                let hasMH = Math.floor(Math.random() * 25);
+                let hasMacc = Math.floor(Math.random() * 25);
+                if (hasMH == 0) {
+                    consonants.push("mh");
+                }
+                if (hasMacc == 0) {
+                    consonants.push("ṃ");
+                }
+            }
+            if (hasN != 1) {
+                consonants.push("n");
+                let hasNH = Math.floor(Math.random() * 25);
+                let hasNacc = Math.floor(Math.random() * 5);
+                let hasNaccTwo = Math.floor(Math.random() * 5);
+                let hasNaccThree = Math.floor(Math.random() * 5);
+                let hasNaccFour = Math.floor(Math.random() * 5);
+                if (hasNH == 0) {
+                    consonants.push("nh");
+                }
+                if (hasNacc == 0) {
+                    consonants.push("ñ");
+                }
+                if (hasNaccTwo == 0) {
+                    consonants.push("ń");
+                }
+                if (hasNaccThree == 0) {
+                    consonants.push("n̦");
+                }
+                if (hasNaccFour == 0) {
+                    consonants.push("ṇ");
+                }
+            }
+            if (hasNG == 1) {
+                consonants.push("ng");
+                let NGacc = Math.floor(Math.random() * 10);
+                if (NGacc == 1) {
+                    consonants.pop();
+                    consonants.push("ŋ");
+                }
+            }
+            if (hasW != 1) {
+                consonants.push("w");
+                let hasWH = Math.floor(Math.random() * 25);
+                if (hasWH == 0) {
+                    consonants.push("wh");
+                }
+            }
+            if (hasL != 1) {
+                consonants.push("l");
+                let hasLH = Math.floor(Math.random() * 25);
+                let hasLacc = Math.floor(Math.random() * 25);
+                if (hasLH == 0) {
+                    consonants.push("lh");
+                }
+                if (hasLacc == 0) {
+                    consonants.push("ḷ");
+                }
+            }
+            if (hasY != 1) {
+                consonants.push("y");
+            }
+            if (hasF != 1) {
+                consonants.push("f");
+            }
+            if (hasV == 1) {
+                consonants.push("v");
+                let hasVacc = Math.floor(Math.random() * 25);
+                if (hasVacc == 0) {
+                    consonants.push("v̆");
+                }
+            }
+            if (hasS != 1) {
+                consonants.push("s");
+                let hasSH = Math.floor(Math.random() * 2);
+                let hasSacc = Math.floor(Math.random() * 2);
+                let hasSaccTwo = Math.floor(Math.random() * 2);
+                if (hasSH == 0) {
+                    consonants.push("sh");
+                }
+                if (hasSacc == 0) {
+                    consonants.push("š");
+                }
+                if (hasSaccTwo == 0) {
+                    consonants.push("ś");
+                }
+            }
+            if (hasZ == 1) {
+                consonants.push("z");
+                let hasZH = Math.floor(Math.random() * 5);
+                let hasZacc = Math.floor(Math.random() * 5);
+                let hasZaccTwo = Math.floor(Math.random() * 5);
+                if (hasZH == 0) {
+                    consonants.push("zh");
+                }
+                if (hasZacc == 0) {
+                    consonants.push("ž");
+                }
+                if (hasZaccTwo == 0) {
+                    consonants.push("ź");
+                }
+            }
+            if (hasH != 1) {
+                consonants.push("h");
+                let hasHacc = Math.floor(Math.random() * 7);
+                if (hasHacc == 0) {
+                    consonants.push("h̯");
+                }
+            }
+            if (hasC == 1) {
+                consonants.push("c");
+                let hasCH = Math.floor(Math.random() * 2);
+                let hasCacc = Math.floor(Math.random() * 2);
+                let hasCaccTwo = Math.floor(Math.random() * 2);
+                let hasCaccThree = Math.floor(Math.random() * 2);
+                if (hasCH == 0) {
+                    consonants.push("ch");
+                }
+                if (hasCacc == 0) {
+                    consonants.push("č");
+                }
+                if (hasCaccTwo == 0) {
+                    consonants.push("ć");
+                }
+                if (hasCaccThree == 0) {
+                    consonants.push("ç");
+                }
+            }
+            if (hasJ == 1) {
+                consonants.push("j");
+                let hasJH = Math.floor(Math.random() * 25);
+                if (hasJH == 0) {
+                    consonants.push("jh");
+                }
+            }
+            if (hasR == 1) {
+                consonants.push("r");
+                let hasRacc = Math.floor(Math.random() * 10);
+                let hasRaccTwo = Math.floor(Math.random() * 10);
+                if (hasRacc == 0) {
+                    consonants.push("r̊");
+                }
+                if (hasRaccTwo == 0) {
+                    consonants.push("ṛ");
+                }
+            }
+            if (hasQ == 1) {
+                consonants.push("q");
+            }
+            if (hasX == 1) {
+                consonants.push("x");
+            }
+            if (hasGT == 0) {
+                consonants.push("'");
+            }
+        }
+
+        function newVowel() {
+            vowels.push(addVowelEl.value);
+        }
+
+        function newConsonant() {
+            consonants.push(addConsonantEl.value);
+        }
+
+        function toggleMenu() {
+            if (menuIsOpen == false) {
+                menuIsOpen = true;
+                openCloseSidebarEl.innerText = "-";
+                navEl.style.width = "250px";
+            } else {
+                menuIsOpen = false;
+                openCloseSidebarEl.innerText = "+";
+                navEl.style.width = "0";
+            }
+        }
+
+        function randomizeBackground() {
+            let r = Math.ceil(Math.random() * 255);
+            let g = Math.ceil(Math.random() * 255);
+            let b = Math.ceil(Math.random() * 255);
+            let ra = r + 50;
+            let ga = g + 50;
+            let ba = b + 50;
+            let ro = r - 50;
+            let go = g - 50;
+            let bo = b - 50;
+            let color = "rgb(" + r + ", " + g + ", " + b + ")";
+            let colora = "rgb(" + ra + ", " + ga + ", " + ba + ")";
+            let coloro = "rgb(" + ro + ", " + go + ", " + bo + ")";
+            bodyEl.style.backgroundImage = "linear-gradient(" + colora + ", " + color + ", " + coloro + ")";
+        }
+        randomizeBackground();
+
+        function shuffle(array) {
+            let currentIndex = array.length;
+
+            // While there remain elements to shuffle...
+            while (currentIndex != 0) {
+
+                // Pick a remaining element...
+                let randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+
+                // And swap it with the current element.
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
+        }
+
+        function update() {
+            consonantsEl.innerText = consonants;
+            vowelsEl.innerText = vowels;
+        }
+
+        setInterval(update, 1);
+    </script>
+</body>
+
+</html>

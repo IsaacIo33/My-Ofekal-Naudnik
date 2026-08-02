@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History Generator</title>
+    <style>
+        body {
+            background-size: 100% 100vh;
+            margin: 0;
+            font-family: algerian;
+            background-attachment: fixed;
+        }
+
+        #openClose,
+        #nextTurn {
+            background-color: lightgrey;
+            margin: 10px;
+            padding: 10px;
+            border: 5px outset darkgrey;
+            font-size: 2rem;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, .5);
+            cursor: pointer;
+            position: fixed;
+        }
+
+        #openClose:active,
+        #nextTurn:active {
+            border: 5px inset grey;
+            background-color: darkgrey;
+        }
+
+        nav {
+            width: 0;
+            height: 100vh;
+            background-color: lightgrey;
+            position: fixed;
+            border-right: 5px outset darkgrey;
+            box-shadow: 5px 0 10px rgba(0, 0, 0, .5);
+            transition: 0.1s;
+            margin-top: -27px;
+            overflow: auto;
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: copperplate gothic;
+            color: lightgrey;
+            -webkit-text-stroke: 1px black;
+        }
+
+        input {
+            border-radius: 25px;
+        }
+
+        button {
+            background-color: white;
+            color: black;
+            border: 1px solid black;
+            padding: 10px;
+            margin: 10px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        button:hover {
+            background-color: black;
+            color: white;
+            border: 1px solid white;
+        }
+
+        .rb {
+            width: 100%;
+            border-left: none;
+            border-right: none;
+            margin: 0;
+        }
+
+        .rb:hover {
+            border-left: none;
+            border-right: none;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, .5);
+            margin: 10px;
+            padding: 10px;
+            color: white;
+            border-radius: 25px;
+            text-align: center;
+        }
+
+        li {
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body id="body">
+    <nav id="menu">
+        <h2>Configuration Settings</h2>
+        <button class="rb" onclick="newHistory()">Generate History!</button>
+        <button class="rb" onclick="saveHistory()">Save History</button>
+        <button class="rb" onclick="randomizeBackground()">Randomize Background</button>
+        <p>Civilizations: <span id="civilizations"></span></p>
+        <label for="addCivilization">
+            Add Civilization:
+            <input type="text" id="newCivilization">
+            <button onclick="newCivilization()">Submit</button>
+            <button onclick="civilizations = []">Clear Civilizations</button>
+            <button onclick="randomizeCivilizations()">Randomize Civilizations</button>
+            <button onclick="addAllCountries()">Add All Modern Countries</button>
+            <p>New Countries Banned: <span id="areBanned">false</span></p>
+            <button onclick="toggleBanNewCountries()">Toggle Ban New Countries</button>
+        </label>
+        <p>Year: <span id="year"></span></p>
+        <label for="year">
+            Set Year:
+            <input type="number" id="setYear">
+            <button onclick="year = setYearEl.value">Submit</button>
+            <button onclick="randomizeYear()">Random Year</button>
+            <button onclick="year = new Date().getFullYear()">Current Year</button>
+        </label>
+        <p>Nuclear Research: <span id="nr"></span>%</p>
+        <label for="setNuclearResearch">
+            Nuclear Research:
+            <input type="number" name="setNuclearResearch" id="setNuclearResearch">
+            <button onclick="setNuclearResearch()">Submit</button>
+            <button onclick="nukeResearch = Math.floor(Math.random()*101)">Randomize</button>
+        </label>
+        <p>Nuclear Powers: <span id="nuclearPowers"></span></p>
+        <label for="addNuclearPower">
+            Add Nuclear Power:
+            <input type="text" name="addNuclearPower" id="addNuclearPower">
+            <button onclick="addNuclearPower()">Submit</button>
+            <button onclick="nuclearPowers = []">Clear</button>
+            <button onclick="randomizeNuclearPowers()">Randomize</button>
+            <button onclick="addAllNuclearPowers()">Add All Modern Nuclear Powers</button>
+        </label>
+    </nav>
+    <button id="openClose" onclick="toggleMenu()" accesskey="o" title="alt+o / alt+shift+o">+</button>
+    <button id="nextTurn" onclick="nextTurn()" accesskey="n" title="alt+n / alt+shift+n"
+        style="margin-left:75px ; display: none;">></button>
+    <h1 id="heading">History Generator</h1>
+    <div id="content"></div>
+    <script>
+        let menuOpen = false;
+        let civilizations = [];
+        let japaneseSyllables = ["a", "i", "u", "e", "o", "ka", "ki", "ku", "ke", "ko", "ga", "gi", "gu", "ge", "go", "ta", "chi", "tsu", "te", "to", "da", "ji", "dzu", "de", "do", "pa", "pi", "pu", "pe", "po", "ba", "bi", "bu", "be", "bo", "ma", "mi", "mu", "me", "mo", "na", "ni", "nu", "ne", "no", "wa", "ya", "yu", "yo", "sa", "shi", "su", "se", "so", "ha", "hi", "fu", "he", "ho", "ra", "ri", "ru", "re", "ro", "n"];
+        let latinConsonants = ["b", "c", "d", "f", "h", "i", "l", "m", "n", "p", "qv", "r", "s", "t", "v"];
+        let latinVowels = ["a", "e", "i", "o", "v"];
+        let vikingConsonants = ["b", "d", "f", "g", "h", "j", "k", "l", "m", "n", "ng", "p", "r", "s", "t", "w"];
+        let vikingVowels = ["a", "e", "i", "o", "u", "æ"];
+        let egyptianConsonants = ["'", "y", "gh", "w", "b", "p", "f", "m", "n", "r", "h", "kh", "kh²", "ç", "s", "sh", "q", "k", "g", "t", "ch", "d", "j"];
+        let egyptianVowels = ["a", "ā", "i", "ī", "u", "ū"];
+        let isaaConsonants = ["v", "g", "h", "gh̅r̭", "n", "m", "p̨", "p̐", "p", "k", "d", "d̲̅", "x", "x͡h", "x̐", "w", "z", "z̐"];
+        let isaaVowels = ["i", "e", "a", "y", "o", "u"];
+        let bakhmutConsonants = ["b", "c", "d", "d̦", "f", "g", "h", "k", "kh", "l", "m", "n", "nj", "ng", "p", "q", "r", "s", "š", "s̑", "s̀", "t", "v", "z", "ž", "z̑"];
+        let bakhmutVowels = ["a", "å", "ă", "e", "è", "i", "o", "ŏ", "u", "w", "y"];
+        let consonants = ["b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z", "sh", "zh", "ch"];
+        let vowels = ["a", "e", "i", "o", "u"];
+        let year;
+        let province;
+        let eventHappennings = 8;
+        let newCountriesBanned = false;
+        let leaderTitles = ["great", "good", "okay", "bad", "terrible", "conquerer", "wise", "foolish", "fat", "thin", "brave", "stinky", "greater"];
+        let nukeResearch = 0;
+        let nuclearPowers = [];
+        const bodyEl = document.getElementById("body");
+        const menuEl = document.getElementById("menu");
+        const openCloseEl = document.getElementById("openClose");
+        const civilizationsEl = document.getElementById("civilizations");
+        const newCivilizationEl = document.getElementById("newCivilization");
+        const contentEl = document.getElementById("content");
+        const setYearEl = document.getElementById("setYear");
+        const yearEl = document.getElementById("year");
+        const nextTurnEl = document.getElementById("nextTurn");
+        const headingEl = document.getElementById("heading");
+        const areBannedEl = document.getElementById("areBanned");
+        const nrEl = document.getElementById("nr");
+        const setNuclearResearchEl = document.getElementById("setNuclearResearch");
+        const nuclearPowersEl = document.getElementById("nuclearPowers");
+        const addNuclearPowerEl = document.getElementById("addNuclearPower");
+
+        function addAllNuclearPowers() {
+            nuclearPowers.push("United States");
+            nuclearPowers.push("Russia");
+            nuclearPowers.push("China");
+            nuclearPowers.push("India");
+            nuclearPowers.push("Pakistan");
+            nuclearPowers.push("United Kingdom");
+            nuclearPowers.push("France");
+            nuclearPowers.push("Israel");
+            nuclearPowers.push("North Korea");
+        }
+
+        function randomizeNuclearPowers() {
+            nuclearPowers = [];
+            for (let i = 0; i < Math.ceil(Math.random() * 5); i++) {
+                nuclearPowers.push(civilizations[Math.floor(Math.random() * civilizations.length)]);
+            }
+        }
+
+        function addNuclearPower() {
+            nuclearPowers.push(addNuclearPowerEl.value);
+        }
+
+        function setNuclearResearch() {
+            nukeResearch = setNuclearResearchEl.value;
+        }
+
+        function addAllCountries() {
+            civilizations.push("Canada");
+            civilizations.push("United States");
+            civilizations.push("Mexico");
+            civilizations.push("Guatemala");
+            civilizations.push("Belize");
+            civilizations.push("Honduras");
+            civilizations.push("El Salvador");
+            civilizations.push("Nicaragua");
+            civilizations.push("Costa Rica");
+            civilizations.push("Panama");
+            civilizations.push("Cuba");
+            civilizations.push("The Bahamas");
+            civilizations.push("Haiti");
+            civilizations.push("Jamaica");
+            civilizations.push("Dominican Republic");
+            civilizations.push("Antigua and Barbuda");
+            civilizations.push("Saint Lucia");
+            civilizations.push("Dominica");
+            civilizations.push("Barbados");
+            civilizations.push("Saint Vincent and the Grenadines");
+            civilizations.push("Saint Kitts and Nevis");
+            civilizations.push("Colombia");
+            civilizations.push("Venezuela");
+            civilizations.push("Guyana");
+            civilizations.push("Suriname");
+            civilizations.push("Ecuador");
+            civilizations.push("Peru");
+            civilizations.push("Brazil");
+            civilizations.push("Bolivia");
+            civilizations.push("Paraguay");
+            civilizations.push("Uruguay");
+            civilizations.push("Chile");
+            civilizations.push("Argentina");
+            civilizations.push("Iceland");
+            civilizations.push("Portugal");
+            civilizations.push("Spain");
+            civilizations.push("Andorra");
+            civilizations.push("France");
+            civilizations.push("Luxembourg");
+            civilizations.push("Belgium");
+            civilizations.push("The Netherlands");
+            civilizations.push("United Kingdom");
+            civilizations.push("Ireland");
+            civilizations.push("Malta");
+            civilizations.push("Italy");
+            civilizations.push("Switzerland");
+            civilizations.push("Austria");
+            civilizations.push("Germany");
+            civilizations.push("Liechtenstein");
+            civilizations.push("Denmark");
+            civilizations.push("Norway");
+            civilizations.push("Sweden");
+            civilizations.push("Finland");
+            civilizations.push("Estonia");
+            civilizations.push("Latvia");
+            civilizations.push("Lithuania");
+            civilizations.push("Greece");
+            civilizations.push("Albania");
+            civilizations.push("Macendonia");
+            civilizations.push("Bulgaria");
+            civilizations.push("Serbia");
+            civilizations.push("Croatia");
+            civilizations.push("Bosnia and Herzegovnia");
+            civilizations.push("Romania");
+            civilizations.push("Moldova");
+            civilizations.push("Hungary");
+            civilizations.push("Slovenia");
+            civilizations.push("Slovakia");
+            civilizations.push("Czechia");
+            civilizations.push("Poland");
+            civilizations.push("Ukraine");
+            civilizations.push("Belarus");
+            civilizations.push("Türkiye");
+            civilizations.push("Russia");
+            civilizations.push("Georgia");
+            civilizations.push("Armenia");
+            civilizations.push("Azerbijan");
+            civilizations.push("Kazakhstan");
+            civilizations.push("Egypt");
+            civilizations.push("Libya");
+            civilizations.push("Tunisia");
+            civilizations.push("Algeria");
+            civilizations.push("Morocco");
+            civilizations.push("Sudan");
+            civilizations.push("South Sudan");
+            civilizations.push("Chad");
+            civilizations.push("Mali");
+            civilizations.push("Mauritania");
+            civilizations.push("Senegal");
+            civilizations.push("Gambia");
+            civilizations.push("Guinea Bissau")
+            civilizations.push("Guinea");
+            civilizations.push("Sierra Leone");
+            civilizations.push("Liberia");
+            civilizations.push("Ghana");
+            civilizations.push("Ivory Coast");
+            civilizations.push("Nigeria");
+            civilizations.push("Niger");
+            civilizations.push("Somalia");
+            civilizations.push("Ethiopia");
+            civilizations.push("Eritrea");
+            civilizations.push("Djibouti");
+            civilizations.push("Equatorial Guinea");
+            civilizations.push("Gabon");
+            civilizations.push("Republic of the Congo");
+            civilizations.push("Democratic Republic of the Congo");
+            civilizations.push("Kenya");
+            civilizations.push("Tanzania");
+            civilizations.push("Angola");
+            civilizations.push("Botswana");
+            civilizations.push("Zimbabwe");
+            civilizations.push("Mozambique");
+            civilizations.push("Malawi");
+            civilizations.push("Zambia");
+            civilizations.push("South Africa");
+            civilizations.push("Lesotho");
+            civilizations.push("Eswatini");
+            civilizations.push("Madagascar");
+            civilizations.push("Seychelles");
+            civilizations.push("Comoros");
+            civilizations.push("Mauritius");
+            civilizations.push("Cape Verde");
+            civilizations.push("São Tome and Principe");
+            civilizations.push("Japan");
+            civilizations.push("South Korea");
+            civilizations.push("North Korea");
+            civilizations.push("China");
+            civilizations.push("Mongolia");
+            civilizations.push("Vietnam");
+            civilizations.push("Laos");
+            civilizations.push("Cambodia");
+            civilizations.push("Thailand");
+            civilizations.push("Myanmar");
+            civilizations.push("Malaysia");
+            civilizations.push("Singapore");
+            civilizations.push("Hong Kong");
+            civilizations.push("Macau");
+            civilizations.push("Taiwan");
+            civilizations.push("Indonesia");
+            civilizations.push("East Timor");
+            civilizations.push("Brunei");
+            civilizations.push("Bangladesh");
+            civilizations.push("India");
+            civilizations.push("Nepal");
+            civilizations.push("Bhutan");
+            civilizations.push("Pakistan");
+            civilizations.push("Sri Lanka");
+            civilizations.push("Maledives");
+            civilizations.push("Afghanistan");
+            civilizations.push("Tajikistan");
+            civilizations.push("Kyrgistan");
+            civilizations.push("Turkmenistan");
+            civilizations.push("Uzbekistan");
+            civilizations.push("Iran");
+            civilizations.push("Kuwait");
+            civilizations.push("Saudi Arabia");
+            civilizations.push("Qatar");
+            civilizations.push("Bahrain");
+            civilizations.push("United Arab Emirates");
+            civilizations.push("Oman");
+            civilizations.push("Yemen");
+            civilizations.push("Iraq");
+            civilizations.push("Jordan");
+            civilizations.push("Syria");
+            civilizations.push("Lebanon");
+            civilizations.push("Israel");
+            civilizations.push("Australia");
+            civilizations.push("New Zealand");
+            civilizations.push("Papua New Guinea");
+            civilizations.push("Solomon Islands");
+            civilizations.push("Vanuatu");
+            civilizations.push("Micronesia");
+            civilizations.push("Kiribati");
+            civilizations.push("Fiji");
+            civilizations.push("Tonga");
+            civilizations.push("Vatican City");
+            civilizations.push("San Marino");
+            civilizations.push("Nauru");
+            civilizations.push("Tuvalu");
+            civilizations.push("Philliphines");
+            civilizations.push("Palau");
+        }
+
+        function toggleBanNewCountries() {
+            if (newCountriesBanned == false) {
+                newCountriesBanned = true;
+                eventHappennings -= 1;
+                areBannedEl.innerText = newCountriesBanned;
+            } else {
+                newCountriesBanned = false;
+                eventHappennings += 1;
+                areBannedEl.innerText = newCountriesBanned;
+            }
+        }
+
+        function saveHistory() {
+            toggleMenu();
+            headingEl.style.display = "none";
+            openCloseEl.style.display = "none";
+            nextTurnEl.style.display = "none";
+            window.print();
+            toggleMenu();
+            headingEl.style.display = "block";
+            openCloseEl.style.display = "block";
+            nextTurnEl.style.display = "block";
+        }
+
+        function generateWord(word) {
+            word = "";
+            for (let i = 0; i < Math.ceil(Math.random() * 5); i++) {
+                let newSyllable = vowels[Math.floor(Math.random() * vowels.length)];
+                let cSyllable = Math.floor(Math.random() * 2);
+                let syllableC = Math.floor(Math.random() * 2);
+                if (cSyllable == 0) {
+                    newSyllable = consonants[Math.floor(Math.random() * consonants.length)] + newSyllable;
+                }
+                if (syllableC == 0) {
+                    newSyllable = newSyllable + consonants[Math.floor(Math.random() * consonants.length)];
+                }
+                word = word + newSyllable;
+            }
+            word = word.split("");
+            word[0] = word[0].toUpperCase();
+            word = word.join("");
+            return word;
+        }
+
+        function nextTurn() {
+            const newContainerEl = document.createElement("div");
+            newContainerEl.classList.add("container");
+            contentEl.appendChild(newContainerEl);
+            year++;
+            let newContainerHeadingEl = document.createElement("h2");
+            newContainerHeadingEl.innerText = "Year " + year;
+            newContainerEl.appendChild(newContainerHeadingEl);
+            let newEventsListEl = document.createElement("ol");
+            let eventsNum = Math.ceil(Math.random() * 5);
+            newContainerEl.appendChild(newEventsListEl);
+            for (let i = 0; i < eventsNum; i++) {
+                let newEventEl = document.createElement("li");
+                let eventHappening = Math.floor(Math.random() * eventHappennings);
+                if (eventHappening == 0) {
+                    let civOne = civilizations[Math.floor(Math.random() * civilizations.length)];
+                    let civTwo = civilizations[Math.floor(Math.random() * civilizations.length)];
+                    if (civOne != civTwo) {
+                        newEventEl.innerText = civOne + " declared war on " + civTwo;
+                        let victorious = Math.floor(Math.random() * 2);
+                        if (victorious == 0) {
+                            newEventEl.innerText = civOne + " declared war on " + civTwo + ". " + civOne + " won the war.";
+                            let treaty = Math.floor(Math.random() * 4);
+                            if (treaty == 0) {
+                                province = generateWord();
+                                let reparationDoneDate = year + Math.ceil(Math.random() * 10);
+                                newEventEl.innerText = civOne + " declared war on " + civTwo + ". " + civOne + " won the war. The treaty is that " + civTwo + " must pay reparations until " + reparationDoneDate + ".";
+                            } else if (treaty == 1) {
+                                province = generateWord();
+                                newEventEl.innerText = civOne + " declared war on " + civTwo + ". " + civOne + " won the war. The treaty is that " + civTwo + " must give the province of " + province + " to " + civOne + ".";
+                            } else if (treaty == 2) {
+                                province = generateWord();
+                                let reparationDoneDate = year + Math.ceil(Math.random() * 10);
+                                newEventEl.innerText = civOne + " declared war on " + civTwo + ". " + civOne + " won the war. The treaty is that " + civTwo + " must pay reparations until " + reparationDoneDate + " and " + civTwo + " must give the province of " + province + " to " + civOne + ".";
+                            } else {
+                                newEventEl.innerText = civOne + " declared war on " + civTwo + ". " + civOne + " won the war. The treaty is that " + civTwo + " will be annexed by " + civOne + ".";
+                                let index = civilizations.indexOf(civTwo);
+                                if (index > -1) { // only splice array when item is found
+                                    civilizations.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                        } else {
+                            newEventEl.innerText = civOne + " declared war on " + civTwo + ". " + civTwo + " won the war.";
+                            let treaty = Math.floor(Math.random() * 4);
+                            if (treaty == 0) {
+                                province = generateWord();
+                                let reparationDoneDate = year + Math.ceil(Math.random() * 10);
+                                newEventEl.innerText = civOne + " declared war on " + civTwo + ". " + civTwo + " won the war. The treaty is that " + civOne + " must pay reparations until " + reparationDoneDate + ".";
+                            } else if (treaty == 1) {
+                                province = generateWord();
+                                newEventEl.innerText = civOne + " declared war on " + civTwo + ". " + civTwo + " won the war. The treaty is that " + civOne + " must give the province of " + province + " to " + civTwo + ".";
+                            } else if (treaty == 2) {
+                                province = generateWord();
+                                let reparationDoneDate = year + Math.ceil(Math.random() * 10);
+                                newEventEl.innerText = civOne + " declared war on " + civTwo + ". " + civOne + " won the war. The treaty is that " + civTwo + " must pay reparations until " + reparationDoneDate + " and " + civTwo + " must give the province of " + province + " to " + civOne + ".";
+                            } else {
+                                newEventEl.innerText = civOne + " declared war on " + civTwo + ". " + civTwo + " won the war. The treaty is that " + civOne + " will be annexed by " + civTwo + ".";
+                                let index = civilizations.indexOf(civOne);
+                                if (index > -1) { // only splice array when item is found
+                                    civilizations.splice(index, 1); // 2nd parameter means remove one item only
+                                }
+                            }
+                        }
+                    } else {
+                        newEventEl.innerText = "There has been a revolution in " + civOne + ".";
+                        let victorious = Math.floor(Math.random() * 2);
+                        if (victorious == 0) {
+                            newEventEl.innerText = "There has been a revolution in " + civOne + ". The revolution was successfully destroyed.";
+                        } else {
+                            newEventEl.innerText = "There has been a revolution in " + civOne + ". The revolution was successful.";
+                        }
+                    }
+                } else if (eventHappening == 1) {
+                    let civOne = civilizations[Math.floor(Math.random() * civilizations.length)];
+                    let civTwo = civilizations[Math.floor(Math.random() * civilizations.length)];
+                    if (civOne == civTwo) {
+                        newEventEl.innerText = civOne + " gained much strength.";
+                    } else {
+                        newEventEl.innerText = civOne + " formed an alliance with " + civTwo + ".";
+                        let alliance = civOne + " and " + civTwo;
+                        civilizations.push(alliance);
+                        let index = civilizations.indexOf(civOne);
+                        if (index > -1) { // only splice array when item is found
+                            civilizations.splice(index, 1); // 2nd parameter means remove one item only
+                        }
+                        index = civilizations.indexOf(civTwo);
+                        if (index > -1) { // only splice array when item is found
+                            civilizations.splice(index, 1); // 2nd parameter means remove one item only
+                        }
+                    }
+                } else if (eventHappening == 2) {
+                    let civ = civilizations[Math.floor(Math.random() * civilizations.length)];
+                    let newLeader = generateWord();
+                    let leaderTitle = leaderTitles[Math.floor(Math.random() * leaderTitles.length)];
+                    newEventEl.innerText = newLeader + " the " + leaderTitle + " is the new leader of " + civ + ".";
+                } else if (eventHappening == 3) {
+                    let inventor = generateWord();
+                    let civ = civilizations[Math.floor(Math.random() * civilizations.length)];
+                    let moreProgress = Math.random() * year / 100;
+                    let willBe = nukeResearch + moreProgress;
+                    newEventEl.innerText = inventor + " from " + civ + " has done research into nuclear technology. Before research: " + nukeResearch + "%, after research: " + willBe + "%.";
+                    nukeResearch += moreProgress;
+                    if (nukeResearch >= 100) {
+                        newEventEl.innerText = civ + " now has access to nuclear weapons.";
+                        nuclearPowers.push(civ);
+                        nukeResearch = 0;
+                    }
+                } else if (eventHappening == 4) {
+                    if (nuclearPowers.length >= 1) {
+                        let civ = nuclearPowers[Math.floor(Math.random() * nuclearPowers.length)];
+                        let target = civilizations[Math.floor(Math.random() * civilizations.length)];
+                        newEventEl.innerText = civ + " has nuked " + target + ".";
+                        let targetDied = Math.floor(Math.random() * 2);
+                        if (targetDied == 0) {
+                            civilizations.slice(civilizations.indexOf(target), 1);
+                            if (nuclearPowers.includes(target)) {
+                                nuclearPowers.slice(nuclearPowers.indexOf(target), 1);
+                            }
+                            newEventEl.innerText = civ + " has nuked " + target + ". " + target + " collapsed.";
+                            let mkostro = civilizations.indexOf(target);
+                            civilizations.slice(mkostro, mkostro + 1);
+                        }
+                    }
+                } else if (eventHappening == 5) {
+                    let civ = civilizations[Math.floor(Math.random() * civilizations.length)];
+                    let target = civilizations[Math.floor(Math.random() * civilizations.length)];
+                    let resources = ["pounds of food", "ingots of gold", "talents of silver", "ingots of iron", "ingots of copper", "items of clothing", "gallons of petrol", "gallons of diesel", "melee weapons", "light weapons", "heavy weapons", "sets of armor", "helmets"];
+                    if (civ == target) {
+                        let goldenAges = ["science", "prosperity", "literature"];
+                        newEventEl.innerText = civ + " has reached its golden age of " + goldenAges[Math.floor(Math.random() * goldenAges.length) + "."];
+                    } else {
+                        newEventEl.innerText = civ + " supported " + target + " with " + Math.ceil(Math.random() * 100) + " " + resources[Math.floor(Math.random() * resources.length)] + ".";
+                        let resultE = Math.floor(Math.random() * 2);
+                        if (resultE) {
+                            newEventEl.innerText += " They decided to form an alliance.";
+                            let alliance = civ + " and " + target;
+                            civilizations.push(alliance);
+                            let index = civilizations.indexOf(civ);
+                            if (index > -1) { // only splice array when item is found
+                                civilizations.splice(index, 1); // 2nd parameter means remove one item only
+                            }
+                            index = civilizations.indexOf(target);
+                            if (index > -1) { // only splice array when item is found
+                                civilizations.splice(index, 1); // 2nd parameter means remove one item only
+                            }
+                        }
+                    }
+                } else if (eventHappening == 6) {
+                    let civ = civilizations[Math.floor(Math.random() * civilizations.length)];
+                    let pos = Math.floor(Math.random() * 2);
+                    let empires = ["Roman", "Russian", "Persian", "Japanese", "Chinese", "German", "Spanish", "English", "Ottoman", "Arab"];
+                    if (civ.toLowerCase().includes("jap")) {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Japanese Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Japanese Empire";
+                    } else if (civ.toLowerCase().includes("rom")) {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Roman Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Roman Empire";
+                    } else if (civ.toLowerCase().includes("vik")) {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the German Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "German Empire";
+                    } else if (civ.toLowerCase().includes("egy")) {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Egyptian Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Egyptian Empire";
+                    } else if (civ.toLowerCase().includes("isa")) {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Isaa Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Isaa Empire";
+                    } else if (civ.toLowerCase().includes("bak")) {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Dellan Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Dellan Empire";
+                    } else if (civ.toLowerCase() == "italy") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Roman Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Roman Empire";
+                    } else if (civ.toLowerCase() == "russia" || civ.toLowerCase() == "muscovy") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Russian Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Russian Empire";
+                    } else if (civ.toLowerCase() == "iran" || civ.toLowerCase() == "persia") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Persian Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Persian Empire";
+                    } else if (civ.toLowerCase() == "japan") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Japanese Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Japanese Empire";
+                    } else if (civ.toLowerCase() == "china" || civ.toLowerCase() == "qing") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Chinese Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Chinese Empire";
+                    } else if (civ.toLowerCase() == "germany" || civ.toLowerCase() == "prussia") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the German Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "German Empire";
+                    } else if (civ.toLowerCase() == "spain") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Spanish Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Spanish Empire";
+                    } else if (civ.toLowerCase() == "united kingdom" || civ.toLowerCase() == "uk" || civ.toLowerCase() == "england") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the British Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Britsh Empire";
+                    } else if (civ.toLowerCase() == "turkey") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Ottoman Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Ottoman Empire";
+                    } else if (civ.toLowerCase() == "saudi arabia") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Arab Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Arab Empire";
+                    } else if (civ.toLowerCase() == "sweden") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Swedish Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Swedish Empire";
+                    } else if (civ.toLowerCase() == "austria") {
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be the Austrian Emperor!";
+                        civilizations[civilizations.indexOf(civ)] = "Austrian Empire";
+                    } else {
+                        let empireIndex = Math.floor(Math.random() * empires.length);
+                        newEventEl.innerText = "The leader of " + civ + " has declared himself to be an emperor!";
+                        if (!civ.toLowerCase().includes("empire")) {
+                            civilizations[civilizations.indexOf(civ)] += " Empire";
+                        }
+                    }
+                } else {
+                    let newCivilization = generateWord();
+                    let newCivOrd = Math.floor(Math.random() * 2);
+                    let government = Math.floor(Math.random() * 9);
+                    if (newCivOrd) {
+                        if (!government) {
+                            newCivilization = "Kingdom of " + newCivilization;
+                        } else if (government == 1) {
+                            newCivilization = "Republic of " + newCivilization;
+                        } else if (government == 2) {
+                            newCivilization = "Democratic Republic of " + newCivilization;
+                        } else if (government == 3) {
+                            newCivilization = "People's Republic of " + newCivilization;
+                        } else if (government == 4) {
+                            newCivilization = "State of " + newCivilization;
+                        } else if (government == 5) {
+                            newCivilization = "Federation of " + newCivilization;
+                        } else if (government == 6) {
+                            newCivilization = "Confederation of " + newCivilization;
+                        } else if (government == 7) {
+                            newCivilization = "Tsardom of " + newCivilization;
+                        } else if (government == 8) {
+                            newCivilization = "Khanete of " + newCivilization;
+                        }
+                    } else {
+                        if (!government) {
+                            newCivilization = newCivilization + " Kingdom";
+                        } else if (government == 1) {
+                            newCivilization = newCivilization + " Republic";
+                        } else if (government == 2) {
+                            newCivilization = newCivilization + " Democratic Republic";
+                        } else if (government == 3) {
+                            newCivilization = newCivilization + " People's Republic";
+                        } else if (government == 4) {
+                            newCivilization = newCivilization + " State";
+                        } else if (government == 5) {
+                            newCivilization = newCivilization + " Federation";
+                        } else if (government == 6) {
+                            newCivilization = newCivilization + " Confederation";
+                        } else if (government == 7) {
+                            newCivilization = newCivilization + " Tsardom";
+                        } else if (government == 8) {
+                            newCivilization = newCivilization + " Khanete";
+                        }
+                    }
+                    newEventEl.innerText = newCivilization + " has been founded.";
+                    civilizations.push(newCivilization);
+                }
+                newEventsListEl.appendChild(newEventEl);
+            }
+        }
+
+        function randomizeYear() {
+            let negPos = Math.floor(Math.random() * 2);
+            if (negPos == 0) {
+                year = Math.floor(Math.random() * 2100);
+            } else {
+                year = Math.floor(Math.random() * -2100);
+            }
+        }
+
+        function newHistory() {
+            if (civilizations.length != 0 && civilizations.length != 1 && year != undefined) {
+                contentEl.innerHTML = "";
+                toggleMenu();
+                nextTurnEl.style.display = "block";
+                nextTurn();
+            } else {
+                alert("You need atleast two civilizations and a selected year.");
+            }
+        }
+
+        function randomizeCivilizations() {
+            civilizations = [];
+            for (let i = 0; i < Math.ceil(Math.random() * 100); i++) {
+                let newCivName = "";
+                let lang = Math.floor(Math.random() * 6);
+                for (let i = 0; i < Math.ceil(Math.random() * 5); i++) {
+                    if (lang == 0) {
+                        newCivName = newCivName + japaneseSyllables[Math.floor(Math.random() * japaneseSyllables.length)];
+                    } else if (lang == 1) {
+                        let newSyllable = latinVowels[Math.floor(Math.random() * latinVowels.length)];
+                        let cSyllable = Math.floor(Math.random() * 2);
+                        let syllableC = Math.floor(Math.random() * 2);
+                        if (cSyllable == 0) {
+                            newSyllable = latinConsonants[Math.floor(Math.random() * latinConsonants.length)] + newSyllable;
+                        }
+                        if (syllableC == 0) {
+                            newSyllable = newSyllable + latinConsonants[Math.floor(Math.random() * latinConsonants.length)];
+                        }
+                        newCivName = newCivName + newSyllable;
+                    } else if (lang == 2) {
+                        let newSyllable = vikingVowels[Math.floor(Math.random() * vikingVowels.length)];
+                        let cSyllable = Math.floor(Math.random() * 2);
+                        let syllableC = Math.floor(Math.random() * 2);
+                        if (cSyllable == 0) {
+                            newSyllable = vikingConsonants[Math.floor(Math.random() * vikingConsonants.length)] + newSyllable;
+                        }
+                        if (syllableC == 0) {
+                            newSyllable = newSyllable + vikingConsonants[Math.floor(Math.random() * vikingConsonants.length)];
+                        }
+                        newCivName = newCivName + newSyllable;
+                    } else if (lang == 3) {
+                        let newSyllable = egyptianVowels[Math.floor(Math.random() * egyptianVowels.length)];
+                        let cSyllable = Math.floor(Math.random() * 2);
+                        let syllableC = Math.floor(Math.random() * 2);
+                        if (cSyllable == 0) {
+                            newSyllable = egyptianConsonants[Math.floor(Math.random() * egyptianConsonants.length)] + newSyllable;
+                        }
+                        if (syllableC == 0) {
+                            newSyllable = newSyllable + egyptianConsonants[Math.floor(Math.random() * egyptianConsonants.length)];
+                        }
+                        newCivName = newCivName + newSyllable;
+                    } else if (lang == 4) {
+                        let newSyllable = isaaVowels[Math.floor(Math.random() * isaaVowels.length)];
+                        let cSyllable = Math.floor(Math.random() * 2);
+                        let syllableC = Math.floor(Math.random() * 2);
+                        if (cSyllable == 0) {
+                            newSyllable = isaaConsonants[Math.floor(Math.random() * isaaConsonants.length)] + newSyllable;
+                        }
+                        if (syllableC == 0) {
+                            newSyllable = newSyllable + isaaConsonants[Math.floor(Math.random() * isaaConsonants.length)];
+                        }
+                        newCivName = newCivName + newSyllable;
+                    } else {
+                        let newSyllable = bakhmutVowels[Math.floor(Math.random() * bakhmutVowels.length)];
+                        let cSyllable = Math.floor(Math.random() * 2);
+                        let syllableC = Math.floor(Math.random() * 2);
+                        if (cSyllable == 0) {
+                            newSyllable = bakhmutConsonants[Math.floor(Math.random() * bakhmutConsonants.length)] + newSyllable;
+                        }
+                        if (syllableC == 0) {
+                            newSyllable = newSyllable + bakhmutConsonants[Math.floor(Math.random() * bakhmutConsonants.length)];
+                        }
+                        newCivName = newCivName + newSyllable;
+                    }
+                }
+                if (lang == 0) {
+                    newCivName = newCivName + " (Jap.)";
+                } else if (lang == 1) {
+                    newCivName = newCivName + " (Rom.)";
+                } else if (lang == 2) {
+                    newCivName = newCivName + " (Vik.)";
+                } else if (lang == 3) {
+                    newCivName = newCivName + " (Egy.)";
+                } else if (lang == 4) {
+                    newCivName = newCivName + " (Isa.)";
+                } else {
+                    newCivName = newCivName + " (Bak.)";
+                }
+                civilizations.push(newCivName);
+            }
+        }
+
+        function newCivilization() {
+            civilizations.push(newCivilizationEl.value);
+        }
+
+        function toggleMenu() {
+            if (menuOpen == false) {
+                menuEl.style.width = "250px";
+                openCloseEl.innerText = "-";
+                menuOpen = true;
+            } else {
+                menuEl.style.width = "0";
+                openCloseEl.innerText = "+";
+                menuOpen = false;
+            }
+        }
+
+        function randomizeBackground() {
+            let r = Math.ceil(Math.random() * 255);
+            let g = Math.ceil(Math.random() * 255);
+            let b = Math.ceil(Math.random() * 255);
+            let ra = r + 50;
+            let ga = g + 50;
+            let ba = b + 50;
+            let ro = r - 50;
+            let go = g - 50;
+            let bo = b - 50;
+            let colora = "rgb(" + ra + ", " + ga + ", " + ba + ")";
+            let color = "rgb(" + r + ", " + g + ", " + b + ")";
+            let coloro = "rgb(" + ro + ", " + go + ", " + bo + ")";
+            bodyEl.style.backgroundImage = "linear-gradient(" + colora + ", " + color + ", " + coloro + ")";
+        }
+        randomizeBackground();
+
+        function update() {
+            civilizationsEl.innerText = civilizations;
+            yearEl.innerText = year;
+            nrEl.innerText = nukeResearch;
+            nuclearPowersEl.innerText = nuclearPowers;
+        }
+
+        setInterval(update, 1);
+    </script>
+</body>
+
+</html>

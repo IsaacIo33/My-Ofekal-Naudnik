@@ -1,0 +1,634 @@
+{
+    id: 5,
+    name: "My Computer",
+    type: "folder",
+    parent: "desktop",
+    drag: false
+  },
+  {
+    id: 6,
+    name: "Work",
+    type: "folder",
+    parent: 0,
+    drag: false
+  },
+  {
+    id: 7,
+    name: "Fun",
+    type: "folder",
+    parent: 0,
+    drag: false
+  },
+  {
+    id: 8,
+    name: "Personal",
+    type: "folder",
+    parent: 0,
+    drag: false
+  },
+  {
+    id: 9,
+    name: "Sample Files",
+    type: "folder",
+    parent: 0,
+    drag: false
+  },
+  {
+    id: 10,
+    name: "Base OS",
+    type: "folder",
+    parent: 0,
+    drag: false
+  },
+  {
+    id: 11,
+    name: "README",
+    type: "document",
+    parent: 0,
+    drag: false,
+    content: "Please accept a benevolent welcome to Ofekal Naudnik!\n\n\nIf you are looking for fun, here is a TODO list for you!\n\n\n - Get infinity as an answer in Calculator\n\n - Add a widget to your desktop\n\n - Send an email with IO Mail\n\n - (If you know how to code in let or o++) create a program to make your Ofekal experience easier and better for you\n\n - Personalize your UI to your liking\n\n - Explore sample files\n\n - Upload a useful application to Toolbox\n\n - Go one whole week only interacting with your operating system through the terminal. \n\n\n Sincerely, Vikenait Productions"
+  },
+  {
+    id: 12,
+    name: "glo_fac",
+    type: "let",
+    parent: 5,
+    drag: false,
+    content: `setTimeout(() => {
+      window.location.href = "#";
+      startupScreenEl.style.filter = "brightness(0%)";
+      setTimeout(() => {
+        window.location.href = "https://joseph2.farleyengineeredsolutions.org/naudnik";
+      }, 5000);
+    }, 750);`
+  },
+  {
+    id: 13,
+    name: "temp_res",
+    type: "let",
+    parent: 5,
+    drag: false,
+    content: `if (lockPowerOffE) {
+    toggleLockPowerOffOptions();
+  }
+  if (powerOffE) {
+    togglePowerOptions();
+    toggleStartMenu();
+  }
+  setTimeout(() => {
+    window.location.href = "#";
+    lockClockContainerEl.style.marginLeft = "100vw";
+    lockClockContainerEl.style.transform = "rotateY(90deg)";
+    lockClockContainerEl.style.opacity = "0%";
+    startupScreenEl.style.filter = "brightness(0%)";
+    setTimeout(() => {
+      startupScreenEl.style.filter = "brightness(100%)";
+      setTimeout(() => {
+        lockscreenStageOneEl.style.display = "block";
+        window.location.href = "#lockscreen";
+        lockClockContainerEl.style.marginLeft = "calc(100vw - 510px)";
+        lockClockContainerEl.style.transform = "none";
+        lockClockContainerEl.style.opacity = "100%";
+        lockscreenStageTwoEl.style.display = "none";
+        lockscreenStageTwoEl.style.transform = "scale(1.5)";
+        lockscreenStageTwoEl.style.opacity = "0%";
+        lockPowerOffEl.style.display = "block";
+        desktopEl.style.filter = "blur(10px)";
+        desktopEl.style.backdropFilter = "blur(10px)";
+        taskbarEl.style.marginTop = "100vh";
+        if (startMenuIsOpen) {
+          toggleStartMenu();
+        }
+      }, 5000);
+    }, 6000);
+  }, 750);`
+  },
+  {
+    id: 14,
+    name: "mk_dir",
+    type: "let",
+    parent: 5,
+    drag: false,
+    content: `ls = "desktop"; newDirectory()`
+  },
+  {
+    id: 15,
+    name: "lib_nurina",
+    type: "let",
+    parent: 5,
+    drag: false,
+    content: `
+      let width = window.innerWidth;
+      let height = window.innerHeight;
+      
+      // Code under here
+      // Clear and make new code after each call
+      
+      
+      
+      // Code above here
+      
+      function line(id, sx, sy, ex, ey, con, col, wid) {
+        let cx = sx;
+        let cy = sy;
+        for (let i = 0; i < con; i++) {
+          let nPt = document.createElement("div");
+          nPt.classList.add(id);
+          nPt.style.zIndex = 200000;
+          nPt.style.position = "absolute";
+          nPt.style.marginLeft = cx + "px";
+          nPt.style.marginTop = cy + "px";
+          nPt.style.width = wid + "px";
+          nPt.style.height = wid + "px";
+          nPt.style.backgroundColor = col;
+          cx += (ex - sx) / con;
+          cy += (ey - sy) / con;
+          desktopEl.prepend(nPt);
+        }
+      }
+      
+      function square(id, x, y, wid, hei, col, rad) {
+        let sqr = document.createElement("div");
+        sqr.classList.add(id);
+        sqr.style.zIndex = "200000";
+        sqr.style.position = "absolute";
+        sqr.style.marginLeft = x + "px";
+        sqr.style.marginTop = y + "px";
+        sqr.style.width = wid + "px";
+        sqr.style.height = hei + "px";
+        sqr.style.backgroundColor = col;
+        sqr.style.borderRadius = rad + "px";
+        desktopEl.appendChild(sqr);
+      }
+      
+      function circle(id, x, y, wid, hei, col) {
+        let cir = document.createElement("div");
+        cir.classList.add(id);
+        cir.style.zIndex = "200000";
+        cir.style.position = "absolute";
+        cir.style.marginLeft = x + "px";
+        cir.style.marginTop = y + "px";
+        cir.style.width = wid + "px";
+        cir.style.height = hei + "px";
+        cir.style.backgroundColor = col;
+        cir.style.borderRadius = "50%";
+        desktopEl.appendChild(cir);
+      }
+      
+      function image(id, x, y, wid, hei, src, rad) {
+        let img = document.createElement("div");
+        img.classList.add(id);
+        img.style.zIndex = "200000";
+        img.style.position = "absolute";
+        img.style.marginLeft = x + "px";
+        img.style.marginTop = y + "px";
+        img.style.width = wid + "px";
+        img.style.height = hei + "px";
+        img.style.backgroundImage = "url('" + src + "')";
+        img.style.backgroundSize = "100% 100%";
+        img.style.borderRadius = rad + "px";
+        desktopEl.appendChild(img);
+      }
+      
+      // This may need to be called a few times to clear a line
+      function erase(id) {
+        setTimeout(() => {
+          let lineFor = document.getElementsByClassName(id);
+          for (let i = 0; i < lineFor.length; i++) {
+            lineFor[i].outerHTML = "";
+          }
+        }, 250);
+      }
+    `
+  },
+  {
+    id: 16,
+    name: "pro_man",
+    type: "let",
+    parent: 5,
+    drag: false,
+    content: `fileUsage = 100`
+  },
+  {
+    id: 17,
+    name: "usr_adm",
+    type: "o++",
+    parent: 5,
+    drag: false,
+    content: `openSettings(); toSettingsAdministratorSettings()`
+  },
+  {
+    id: 18,
+    name: "Documents",
+    type: "folder",
+    parent: 4,
+    drag: false
+  },
+  {
+    id: 19,
+    name: "Dummy Text",
+    type: "document",
+    parent: 13,
+    drag: false,
+    content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer in orci nec lorem cursus imperdiet auctor id arcu. Maecenas eu porta velit, et malesuada risus. Integer maximus vel ex eget lacinia. Proin luctus lectus odio, vel sollicitudin lorem egestas non. Sed commodo ligula nec felis dignissim ornare. Etiam non nisl risus. Aliquam ultrices turpis et convallis porta. Nunc mollis sem non tortor dapibus fringilla sed sed tellus. Nulla velit quam, viverra in pretium quis, dictum at nibh. Quisque dignissim posuere tellus, quis bibendum neque consectetur a. Sed molestie dictum lectus id accumsan. Integer aliquet velit risus, nec consequat nisi pharetra at. Mauris ac rhoncus nisi. Nunc ac ligula vitae nisi dictum congue. Nam vitae est sed magna finibus accumsan. In hac habitasse platea dictumst.
+
+Aliquam rhoncus lacinia urna. Nunc rutrum fermentum dolor, non hendrerit turpis porttitor sit amet. Praesent vitae leo elit. Nunc scelerisque malesuada eros vitae dapibus. Cras hendrerit, tortor at tincidunt eleifend, nisi nunc facilisis tellus, at condimentum odio ex ac magna. Nunc bibendum facilisis est, ut fringilla sapien feugiat in. Mauris id gravida magna, eget euismod risus. Nulla nibh purus, imperdiet quis ex volutpat, aliquam tempor quam.
+
+Vivamus bibendum velit et justo tincidunt, at feugiat massa sagittis. Morbi vehicula mattis feugiat. Aliquam congue lacinia suscipit. Proin tincidunt dapibus dolor ut vestibulum. Pellentesque at congue tortor. Nulla sollicitudin suscipit risus, non feugiat neque finibus ac. Nullam bibendum dictum mi, a ultricies tortor ultrices eget. Maecenas blandit nunc sit amet tortor lacinia malesuada. Quisque quis nibh vitae lacus porta maximus. Mauris eu massa neque. Proin luctus at nibh vitae lobortis.`
+  },
+  {
+    id: 20,
+    name: "My Webpage",
+    type: "html",
+    parent: 13,
+    drag: false,
+    content: `<!DOCTYPE html>
+    <html>
+      <head>
+        <title>My Webpage</title>
+        <style>
+          body {
+            margin:0 ;
+            font-family:verdana, tahoma, sans-serif ;
+          }
+          
+          nav {
+            width:100vw ;
+            height:100px ;
+            background-color:white ;
+            border-bottom: 1px solid black ;
+            display:flex ;
+            align-items:center ;
+            justify-content:space-evenly ;
+            position:fixed ;
+          }
+          
+          nav img {
+            width:90px ;
+            height:90px ;
+          }
+          
+          nav a {
+            color:black ;
+            text-decoration:none ;
+          }
+          
+          nav a:hover {
+            color:cornflowerblue ;
+          }
+          
+          #main {
+            width:100vw ;
+            height:100vh ;
+            background-image:url("images/wallpaper10.png") ;
+            background-size: 100% 100% ;
+            display:flex ;
+            align-items:center ;
+            justify-content:center ;
+            color:white ;
+            font-size:2rem ;
+            -webkit-text-stroke: 1px black ;
+          }
+          
+          #content {
+            width:100vw ;
+            height:fit-content ;
+            background-color:white ;
+            text-align:center ;
+          }
+          
+          #content ul {
+            width:100px ;
+            margin-left:calc(50vw - 50px) ;
+          }
+          
+          .wallpaper {
+            width:250px ;
+            border-radius:5px ;
+            margin:10px ;
+          }
+          
+          .smallImg {
+            width:150px ;
+            border-radius:5px ;
+            margin:10px ;
+          }
+          
+          #content audio {
+            margin:10px ;
+          }
+          
+          .note {
+            width:calc(100% - 20px) ;
+            height:fit-content ;
+            background-color:lightyellow ;
+            margin:10px ;
+          }
+        </style>
+      </head>
+      <body>
+        <nav>
+          <img src="images/icon.png" />
+          <a href="#main">Home</a>
+          <a href="#main">About</a>
+          <a href="#main">Blog</a>
+        </nav>
+        <div id="main">
+          <h1>My Webpage</h1>
+        </div>
+        <div id="content">
+          <h1>Welcome to My Webpage!</h1>
+          <p>My name is [] and I...</p>
+          <h2>TODO:</h2>
+          <ul>
+            <li>Add Content</li>
+            <li>Style to my liking</li>
+          </ul>
+          <h2>Resources</h2>
+          <h3>Images</h3>
+          <img src="images/wallpaper.png" alt="Wallpaper" class="wallpaper" />
+          <img src="images/wallpaper2.jpg" alt="Wallpaper" class="wallpaper" />
+          <img src="images/wallpaper3.jpg" alt="Wallpaper" class="wallpaper" />
+          <img src="images/wallpaper4.jpg" alt="Wallpaper" class="wallpaper" />
+          <img src="images/wallpaper5.jpg" alt="Wallpaper" class="wallpaper" />
+          <img src="images/wallpaper6.jpg" alt="Wallpaper" class="wallpaper" />
+          <img src="images/wallpaper7.jpg" alt="Wallpaper" class="wallpaper" />
+          <img src="images/wallpaper8.jpg" alt="Wallpaper" class="wallpaper" />
+          <img src="images/wallpaper9.jpg" alt="Wallpaper" class="wallpaper" />
+          <img src="images/wallpaper10.png" alt="Wallpaper" class="wallpaper" />
+          <img src="images/icon.png" alt="Tletku" class="smallImg" />
+          <img src="images/happyTletku.png" alt="Tletku" class="smallImg" />
+          <img src="images/veryHappyTletku.png" alt="Tletku" class="smallImg" />
+          <img src="images/boredTletku.png" alt="Tletku" class="smallImg" />
+          <img src="images/sadTletku.png" alt="Tletku" class="smallImg" />
+          <img src="images/madTletku.png" alt="Tletku" class="smallImg" />
+          <img src="images/surprizedTletku.png" alt="Tletku" class="smallImg" />
+          <img src="images/susTletku.png" alt="Tletku" class="smallImg" />
+          <img src="images/sleepTletku.png" alt="Tletku" class="smallImg" />
+          <img src="images/kingTletku.png" alt="Tletku" class="smallImg" />
+          <img src="images/oldTletku.png" alt="Tletku" class="smallImg" />
+          <img src="images/christmas.png" alt="Holiday" class="smallImg" />
+          <img src="images/easter.png" alt="Holiday" class="smallImg" />
+          <h3>Sounds</h3>
+          <audio src="sounds/startup.mp3" controls></audio>
+          <audio src="sounds/tletkuTalk.mp3" controls></audio>
+          <audio src="sounds/notification.mp3" controls></audio>
+          <audio src="sounds/notification2.mp3" controls></audio>
+          <audio src="sounds/notification3.mp3" controls></audio>
+          <audio src="sounds/notification4.mp3" controls></audio>
+          <audio src="sounds/notification5.mp3" controls></audio>
+          <audio src="sounds/open.mp3" controls></audio>
+          <audio src="sounds/close.mp3" controls></audio>
+          <audio src="sounds/beep.mp3" controls></audio>
+          <audio src="sounds/error.mp3" controls></audio>
+        </div>
+      </body>
+    </html>`
+  },
+  {
+    id: 21,
+    name: "My Let Script",
+    type: "let",
+    parent: 13,
+    drag: false,
+    content: `
+      let desktop = document.getElementById("desktop");
+      tletkuTalkSnd.currentTime = 0;
+      tletkuTalkSnd.play();
+      desktop.style.transition = "0.5s";
+      let todo = Math.floor(Math.random()*4);
+      if (todo == 0) {
+        desktop.style.transform = "translateX(100vw)";
+        setTimeout(() => {
+          desktop.style.transition = "0s";
+          setTimeout(() => {
+            desktop.style.transform = "translateX(-100vw)";
+            setTimeout(() => {
+              desktop.style.transition = "0.5s";
+              setTimeout(() => {
+                desktop.style.transform = "translateX(0)";
+                setTimeout(() => {
+                  desktop.style.transition = "0s";
+                }, 250);
+              }, 1);
+            }, 250);
+          }, 1);
+        }, 250);
+      } else if (todo == 1) {
+        desktop.style.transform = "translateX(-100vw)";
+        setTimeout(() => {
+          desktop.style.transition = "0s";
+          setTimeout(() => {
+            desktop.style.transform = "translateX(100vw)";
+            setTimeout(() => {
+              desktop.style.transition = "0.5s";
+              setTimeout(() => {
+                desktop.style.transform = "translateX(0)";
+                setTimeout(() => {
+                  desktop.style.transition = "0s";
+                }, 250);
+              }, 1);
+            }, 250);
+          }, 1);
+        }, 250);
+      } else if (todo == 2) {
+        desktop.style.transform = "translateY(100vw)";
+        setTimeout(() => {
+          desktop.style.transition = "0s";
+          setTimeout(() => {
+            desktop.style.transform = "translateY(-100vw)";
+            setTimeout(() => {
+              desktop.style.transition = "0.5s";
+              setTimeout(() => {
+                desktop.style.transform = "translateY(0)";
+                setTimeout(() => {
+                  desktop.style.transition = "0s";
+                }, 250);
+              }, 1);
+            }, 250);
+          }, 1);
+        }, 250);
+      } else if (todo == 3) {
+        desktop.style.transform = "translateY(-100vw)";
+        setTimeout(() => {
+          desktop.style.transition = "0s";
+          setTimeout(() => {
+            desktop.style.transform = "translateY(100vw)";
+            setTimeout(() => {
+              desktop.style.transition = "0.5s";
+              setTimeout(() => {
+                desktop.style.transform = "translateY(0)";
+                setTimeout(() => {
+                  desktop.style.transition = "0s";
+                }, 250);
+              }, 1);
+            }, 250);
+          }, 1);
+        }, 250);
+      }
+    `
+  },
+  {
+    id: 22,
+    name: "Instant BSOD",
+    type: "o++",
+    parent: 13,
+    drag: false,
+    content: `
+    window.location.href = '#bsod';
+    `
+  },
+  {
+    id: 23,
+    name: "Images",
+    type: "folder",
+    parent: 4,
+    drag: false
+  },
+  {
+    id: 24,
+    name: "Mt. Varnasu",
+    type: "image",
+    parent: 18,
+    drag: false,
+    content: "images/sample/sampleImg.png",
+    width: 1000,
+    height: 624
+  },
+  {
+    id: 25,
+    name: "Gakiza Farm",
+    type: "image",
+    parent: 18,
+    drag: false,
+    content: "images/sample/sampleImg2.png",
+    width: 1000,
+    height: 665
+  },
+  {
+    id: 26,
+    name: "Asdakan Village",
+    type: "image",
+    parent: 18,
+    drag: false,
+    content: "images/sample/sampleImg3.png",
+    width: 1000,
+    height: 665
+  },
+  {
+    id: 27,
+    name: "Cyclades",
+    type: "image",
+    parent: 18,
+    drag: false,
+    content: "images/sample/sampleImg4.png",
+    width: 1000,
+    height: 665
+  },
+  {
+    id: 28,
+    name: "Armadillo",
+    type: "image",
+    parent: 18,
+    drag: false,
+    content: "images/sample/sampleImg5.png",
+    width: 1000,
+    height: 562
+  },
+  {
+    id: 29,
+    name: "Lizard",
+    type: "image",
+    parent: 18,
+    drag: false,
+    content: "images/sample/sampleImg6.png",
+    width: 1000,
+    height: 664
+  },
+  {
+    id: 30,
+    name: "Squirrel",
+    type: "image",
+    parent: 18,
+    drag: false,
+    content: "images/sample/sampleImg7.png",
+    width: 1000,
+    height: 1121
+  },
+  {
+    id: 31,
+    name: "Lynx Cat",
+    type: "image",
+    parent: 18,
+    drag: false,
+    content: "images/sample/sampleImg8.png",
+    width: 1000,
+    height: 1250
+  },
+  {
+    id: 32,
+    name: "Bordello Flag",
+    type: "image",
+    parent: 18,
+    drag: false,
+    content: "images/sample/bordello.png",
+    width: 500,
+    height: 300
+  },
+  {
+    id: 33,
+    name: "Isaacland Flag",
+    type: "image",
+    parent: 18,
+    drag: false,
+    content: "images/sample/isaacland.png",
+    width: 500,
+    height: 300
+  },
+  {
+    id: 34,
+    name: "Music",
+    type: "folder",
+    parent: 4,
+    drag: false
+  },
+  {
+    id: 35,
+    name: "Winter White",
+    type: "music",
+    parent: 29,
+    drag: false,
+    source: "sounds/canadaMusic.mp3"
+  },
+  {
+    id: 36,
+    name: "Russian Fun",
+    type: "music",
+    parent: 29,
+    drag: false,
+    source: "sounds/russiaMusic.mp3"
+  },
+  {
+    id: 37,
+    name: "Finn Sad Rain Dance",
+    type: "music",
+    parent: 29,
+    drag: false,
+    source: "sounds/finlandMusic.mp3"
+  },
+  {
+    id: 38,
+    name: "Balkan Beat",
+    type: "music",
+    parent: 29,
+    drag: false,
+    source: "sounds/bosniaMusic.mp3"
+  },
+  {
+    id: 39,
+    name: "Spaniard Music",
+    type: "music",
+    parent: 29,
+    drag: false,
+    source: "sounds/spainMusic.mp3"
+  }

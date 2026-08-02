@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auka</title>
+    <link rel="shortcut icon" href="images/auka.png" type="image/x-icon">
+    <style>
+        body {
+            margin: 0;
+            background-image: url("images/auka/aukaBackground.jpg");
+            background-size: 100% 100%;
+            width: 100vw;
+            height: 100vh;
+            overflow: auto;
+            cursor: url("images/cursor.png"), auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            flex-direction: column;
+        }
+
+        #searchbarContainer {
+            width: 50%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 100px;
+            overflow: hidden;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+            transition: 0.5s;
+        }
+
+        #searchbar {
+            width: calc(100% - 70px);
+            height: 100%;
+            font-size: 2rem;
+            padding: 10px;
+            padding-left: 20px;
+            border: none;
+            outline: none;
+            cursor: url("images/text.png"), auto;
+            background-color: transparent;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+        }
+
+        #searchbar::placeholder {
+            color: white;
+            -webkit-text-stroke: 1px black;
+        }
+
+        #searchbtn {
+            width: 70px;
+            height: 100%;
+            background-color: green;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: url("images/pointer.png"), auto;
+            color: white;
+            font-size: 1.5rem;
+            transition: 0.1s;
+        }
+
+        #searchbtn:hover {
+            filter: hue-rotate(25deg) brightness(125%);
+            font-size: 1.6rem;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css"
+        referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <img src="images/auka/logo.png" alt="Auka Web Browser" draggable="false" id="logo">
+    <div id="searchbarContainer">
+        <input type="search" id="searchbar" placeholder="Ask anything..." onmousedown="selectSearchbar()">
+        <button id="searchbtn" onclick="searchTheWeb(searchbarEl.value)"><i
+                class="fa-solid fa-magnifying-glass"></i></button>
+    </div>
+    <script>
+        const searchbarContainerEl = document.getElementById("searchbarContainer");
+        const searchbarEl = document.getElementById("searchbar");
+        const searchbtnEl = document.getElementById("searchbtn");
+
+        document.addEventListener("mousedown", (event) => {
+            if (event.target != searchbarContainerEl && event.target != searchbarEl && event.target != searchbtnEl) {
+                searchbarContainerEl.style.width = "50%";
+            }
+        });
+
+        function selectSearchbar() {
+            searchbarContainerEl.style.width = "60%";
+        }
+
+        function searchTheWeb(q) {
+            top.postMessage("https://ioposts.farleyengineeredsolutions.com/_bot/search.php?q=" + q, location.origin);
+            window.location.href = "https://ioposts.farleyengineeredsolutions.com/_bot/search.php?q=" + q;
+        }
+
+        document.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+        });
+    </script>
+</body>
+
+</html>
