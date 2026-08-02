@@ -1,0 +1,1 @@
+I suggest that you leave the applications text file alone entirely. You can upload apps to it using the Toolbox app in the actual thing by uploading a file.

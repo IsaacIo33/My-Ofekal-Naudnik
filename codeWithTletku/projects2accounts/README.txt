@@ -1,0 +1,1 @@
+For every new project created, it needs to be linked to the account that created it. Every time someone creates a project on Code with Tletku, a seperate file is created here with the name of the project and the username of the user who created it.

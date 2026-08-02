@@ -1,0 +1,1 @@
+Accounts go here saved as a text file with the username of the user and its contents includes information about the user seperated by three percent symbols or (%%%). So, sanitize any input which would contain %%% such as data urls and replace it with abc for example.
