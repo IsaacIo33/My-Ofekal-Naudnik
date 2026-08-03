@@ -1276,7 +1276,7 @@ include "assets/access.php";
       <div class="windowBar">
         <div class="draggableArea" id="ioMailBar">
           <h2 class="windowTitle">IO Posts</h2>
-          <img src="https://isaacio.farleyengineeredsolutions.org/browser/mailIcon.png" alt="Icon" draggable="false"
+          <img src="https://ioposts.farleyengineeredsolutions.com/icon.png" alt="Icon" draggable="false"
             class="windowIcon" />
         </div>
         <div class="windowActionButtons">
