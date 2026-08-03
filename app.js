@@ -23757,6 +23757,14 @@ function searchToolbox() {
   }
 }
 
+
+
+toolboxSearchbarEl.addEventListener("keyup", (event) => { // Make it so you can Press enter to search in Toolbox. (IsaacIo33)
+if (event.key === "Enter"){ // If Enter is pressed
+  searchToolbox(); // Search on Toolbox
+}
+});
+
 toolboxBarEl.addEventListener("mousedown", (event) => {
   toolbox.drag = true;
   offsetX = event.offsetX;
